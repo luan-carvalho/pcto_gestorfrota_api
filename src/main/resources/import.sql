@@ -1,0 +1,1 @@
+INSERT INTO vehicle (make, model, license_plate, type, capacity, kilometers, status) VALUES ('VolksWagem', 'Gol 1.0', 'OLM9220', 'HATCH', 5, 12948, 'AVAILABLE');
