@@ -7,13 +7,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.edu.ifto.gestorfrotaapi.vehicle.dto.VehicleCreationRequestDto;
-import br.edu.ifto.gestorfrotaapi.vehicle.dto.VehicleReponseDto;
+import br.edu.ifto.gestorfrotaapi.vehicle.dto.VehicleResponseDto;
+import br.edu.ifto.gestorfrotaapi.vehicle.dto.VehicleUpdateRequestDto;
 import br.edu.ifto.gestorfrotaapi.vehicle.mapper.VehicleMapper;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.Vehicle;
 import br.edu.ifto.gestorfrotaapi.vehicle.service.VehicleService;
@@ -32,15 +34,15 @@ public class VehicleController {
     }
 
     @GetMapping
-    public List<VehicleReponseDto> getAll() {
+    public List<VehicleResponseDto> getAll() {
         return mapper.toResponseDto(vehicleService.listAllVehicles());
     }
 
     @PostMapping
-    public ResponseEntity<VehicleReponseDto> create(@Valid @RequestBody VehicleCreationRequestDto request) {
+    public ResponseEntity<VehicleResponseDto> createVehicle(@Valid @RequestBody VehicleCreationRequestDto request) {
 
         Vehicle saved = vehicleService.createNewVehicle(mapper.toEntity(request));
-        VehicleReponseDto response = mapper.toResponseDto(saved);
+        VehicleResponseDto response = mapper.toResponseDto(saved);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}").buildAndExpand(saved.getId())
@@ -51,8 +53,18 @@ public class VehicleController {
     }
 
     @GetMapping("/{id}")
-    public VehicleReponseDto getOne(@PathVariable Long id) {
-        return mapper.toResponseDto(vehicleService.getVehicleDetails(id));
+    public VehicleResponseDto getOne(@PathVariable Long id) {
+        return mapper.toResponseDto(vehicleService.getVehicleById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<VehicleResponseDto> updateVehicle(@PathVariable Long id,
+            @RequestBody VehicleUpdateRequestDto request) {
+
+        Vehicle saved = vehicleService.updateVehicleInfo(id, request);
+        VehicleResponseDto response = mapper.toResponseDto(saved);
+        return ResponseEntity.ok(response);
+
     }
 
 }

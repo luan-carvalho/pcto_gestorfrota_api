@@ -1,12 +1,12 @@
 package br.edu.ifto.gestorfrotaapi.vehicle.dto;
 
-public record VehicleReponseDto(
+public record VehicleUpdateRequestDto(
         String make,
         String model,
         String licensePlate,
         String type,
-        String status,
-        Integer capacity,
-        Integer kilometers) {
+        Integer capacity
+
+) {
 
 }
