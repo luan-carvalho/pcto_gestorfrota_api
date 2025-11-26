@@ -53,4 +53,11 @@ public class VehicleService {
 
     }
 
+    public void deleteById(Long id) {
+
+        Vehicle toBeDeleted = getVehicleById(id);
+        repository.delete(toBeDeleted);
+
+    }
+
 }

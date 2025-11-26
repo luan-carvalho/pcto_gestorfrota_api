@@ -23,19 +23,19 @@ public class Vehicle {
     @Enumerated(EnumType.STRING)
     private VehicleType type;
     private Integer capacity;
-    private Integer kilometers;
+    private Integer mileage;
     @Enumerated(EnumType.STRING)
     private VehicleStatus status;
 
     public Vehicle(String model, String make, String licensePlate, VehicleType type, Integer capacity,
-            Integer kilometers,
+            Integer mileage,
             VehicleStatus status) {
         this.model = model;
         this.make = make;
         this.licensePlate = licensePlate;
         this.type = type;
         this.capacity = capacity;
-        this.kilometers = kilometers;
+        this.mileage = mileage;
         this.status = status;
     }
 
@@ -46,6 +46,18 @@ public class Vehicle {
         this.licensePlate = licensePlate;
         this.type = type;
         this.capacity = capacity;
+
+    }
+
+    public void registerNewMileage(Integer newMileage) {
+
+        this.mileage = newMileage;
+
+    }
+
+    public void updateStatus(VehicleStatus status) {
+
+        this.status = status;
 
     }
 

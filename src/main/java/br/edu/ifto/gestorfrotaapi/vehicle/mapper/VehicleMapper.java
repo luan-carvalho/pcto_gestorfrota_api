@@ -21,7 +21,7 @@ public class VehicleMapper {
                 dto.licensePlate(),
                 VehicleType.valueOf(dto.type()),
                 dto.capacity(),
-                dto.kilometers(),
+                dto.mileage(),
                 VehicleStatus.valueOf(dto.status()));
 
     }
@@ -35,7 +35,7 @@ public class VehicleMapper {
                 vehicle.getType().getDescription(),
                 vehicle.getStatus().getDescription(),
                 vehicle.getCapacity(),
-                vehicle.getKilometers());
+                vehicle.getMileage());
 
     }
 
