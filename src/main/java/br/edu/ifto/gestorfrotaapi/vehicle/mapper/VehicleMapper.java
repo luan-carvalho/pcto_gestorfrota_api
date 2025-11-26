@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import br.edu.ifto.gestorfrotaapi.vehicle.dto.VehicleCreationRequestDto;
-import br.edu.ifto.gestorfrotaapi.vehicle.dto.VehicleReponseDto;
+import br.edu.ifto.gestorfrotaapi.vehicle.dto.VehicleResponseDto;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.Vehicle;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.VehicleStatus;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.VehicleType;
@@ -21,25 +21,25 @@ public class VehicleMapper {
                 dto.licensePlate(),
                 VehicleType.valueOf(dto.type()),
                 dto.capacity(),
-                dto.kilometers(),
+                dto.mileage(),
                 VehicleStatus.valueOf(dto.status()));
 
     }
 
-    public VehicleReponseDto toResponseDto(Vehicle vehicle) {
+    public VehicleResponseDto toResponseDto(Vehicle vehicle) {
 
-        return new VehicleReponseDto(
+        return new VehicleResponseDto(
                 vehicle.getMake(),
                 vehicle.getModel(),
                 vehicle.getLicensePlate(),
                 vehicle.getType().getDescription(),
                 vehicle.getStatus().getDescription(),
                 vehicle.getCapacity(),
-                vehicle.getKilometers());
+                vehicle.getMileage());
 
     }
 
-    public List<VehicleReponseDto> toResponseDto(List<Vehicle> vehicles) {
+    public List<VehicleResponseDto> toResponseDto(List<Vehicle> vehicles) {
 
         return vehicles.stream().map(this::toResponseDto).toList();
 
