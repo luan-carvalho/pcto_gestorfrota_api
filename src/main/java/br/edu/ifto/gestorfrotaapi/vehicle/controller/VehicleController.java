@@ -23,7 +23,7 @@ import br.edu.ifto.gestorfrotaapi.vehicle.service.VehicleService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("vehicle")
+@RequestMapping("api/admin/vehicle")
 public class VehicleController {
 
     private final VehicleService vehicleService;
