@@ -39,7 +39,7 @@ To run the application, you simply need to clone the repository, compile the sou
 Open your terminal and run:
 
 ```bash
-git clone [https://github.com/YOUR-USERNAME/PCTO_GESTORFROTA_API.git](https://github.com/YOUR-USERNAME/PCTO_GESTORFROTA_API.git)
+git clone https://github.com/luan-carvalho/pcto_gestorfrota_api.git
 cd PCTO_GESTORFROTA_API
 ```
 #### 2\. Build the Project
