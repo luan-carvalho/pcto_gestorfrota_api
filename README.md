@@ -60,3 +60,24 @@ Once the build is complete, the JAR file will be located in the `target/` direct
 java -jar target/PCTO_GESTORFROTA_API-0.0.1-SNAPSHOT.jar
 ```
 > **Note:** The actual name of the jar file inside the target folder might vary slightly depending on your `pom.xml` version settings. Check the folder if the command above fails.*
+
+### 📑 API Documentation (OpenAPI / Swagger)
+
+This project includes **OpenAPI (Swagger) documentation**, making it easy to explore, test, and understand all available endpoints.
+
+Once the application is running, you can access the interactive API documentation at:
+
+- **Swagger UI:**  
+  http://localhost:8080/api/swagger-ui.html
+
+- **OpenAPI JSON specification:**  
+  http://localhost:8080/api/v3/api-docs
+
+> **Note:** The API is configured with `/api` as its context path, so all endpoints and documentation URLs are prefixed accordingly.
+
+The Swagger UI allows you to:
+- View all available endpoints
+- Inspect request and response models
+- Execute requests directly from the browser
+- Validate authentication and parameters easily
+
