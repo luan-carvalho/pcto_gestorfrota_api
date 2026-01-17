@@ -24,7 +24,7 @@ import br.edu.ifto.gestorfrotaapi.authentication.service.UserService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("api/auth")
+@RequestMapping("auth")
 public class AuthenticationController {
 
     private final AuthenticationManager authManager;

@@ -23,7 +23,7 @@ import br.edu.ifto.gestorfrotaapi.authentication.service.UserService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("api/admin/user")
+@RequestMapping("admin/user")
 public class UserController {
 
     private final UserService userService;
