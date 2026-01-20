@@ -61,4 +61,9 @@ public class Vehicle {
 
     }
 
+    public void deactivate() {
+
+        this.status = VehicleStatus.DECOMISSIONED;
+
+    }
 }

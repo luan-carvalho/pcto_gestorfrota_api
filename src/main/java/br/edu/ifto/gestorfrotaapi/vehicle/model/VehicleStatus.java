@@ -6,7 +6,7 @@ public enum VehicleStatus {
     RESERVED("Reservado"),
     IN_USE("Em uso"),
     MAINTANCE("Em manutenção"),
-    DECOMISSIONED("Baixa");
+    DECOMISSIONED("Inativado");
 
     private String description;
 

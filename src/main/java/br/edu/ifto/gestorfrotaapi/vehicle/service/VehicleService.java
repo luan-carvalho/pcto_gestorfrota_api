@@ -60,4 +60,12 @@ public class VehicleService {
 
     }
 
+    public void deactivate(Long id) {
+
+        Vehicle v = repository.findById(id).orElseThrow(() -> new VehicleNotFoundException(id));
+        v.deactivate();
+        repository.save(v);
+
+    }
+
 }
