@@ -20,6 +20,8 @@ target/
 *.iws
 *.iml
 *.ipr
+.env
+migration.sql
 
 ### NetBeans ###
 /nbproject/private/
