@@ -26,9 +26,9 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/actuator/health").permitAll()
-                        .requestMatchers("/api/auth/login").permitAll()
-                        .requestMatchers("/api/auth/first-access/**").permitAll()
-                        .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "FLEET_MANAGER")
+                        .requestMatchers("/auth/login").permitAll()
+                        .requestMatchers("/auth/first-access/**").permitAll()
+                        .requestMatchers("/admin/**").hasAnyRole("ADMIN", "FLEET_MANAGER")
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
