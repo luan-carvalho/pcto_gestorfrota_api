@@ -38,9 +38,9 @@ public class CustomUserDetails implements UserDetails {
 
     }
 
-    public String getRoleLabel() {
+    public String getRole() {
 
-        return this.user.getRole().getLabel();
+        return this.user.getRole().getDescription();
 
     }
 

@@ -13,11 +13,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.Getter;
 
 @Entity
 @Table(name = "users")
-@Getter
 public class User {
 
     @Id
@@ -120,6 +118,34 @@ public class User {
         this.status = UserStatus.ACTIVE;
         this.firstAccessToken = null;
 
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getRegistration() {
+        return registration;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public UserStatus getStatus() {
+        return status;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public String getFirstAccessToken() {
+        return firstAccessToken;
     }
 
 }

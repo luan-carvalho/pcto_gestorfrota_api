@@ -27,32 +27,34 @@ import jakarta.validation.Valid;
 public class UserController {
 
     private final UserService userService;
+    private final UserMapper userMapper;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, UserMapper userMapper) {
         this.userService = userService;
+        this.userMapper = userMapper;
     }
 
     @PostMapping
     public ResponseEntity<UserCreateResponseDto> create(@RequestBody @Valid UserCreateDto dto) {
-        UserCreateResponseDto response = UserMapper
+        UserCreateResponseDto response = userMapper
                 .toCreateResponseDto(userService.create(dto.name(), dto.registration(), dto.roleId()));
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping
     public ResponseEntity<List<UserResponseDto>> findAll() {
-        return ResponseEntity.ok(UserMapper.toResponseDto(userService.findAll()));
+        return ResponseEntity.ok(userMapper.toResponseDto(userService.findAll()));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDto> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(UserMapper.toResponseDto(userService.findById(id)));
+        return ResponseEntity.ok(userMapper.toResponseDto(userService.findById(id)));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDto> update(@PathVariable Long id, @RequestBody @Valid UserUpdateDto dto) {
         return ResponseEntity
-                .ok(UserMapper.toResponseDto(userService.update(id, dto.name(), dto.registration(), dto.roleId())));
+                .ok(userMapper.toResponseDto(userService.update(id, dto.name(), dto.registration(), dto.roleId())));
     }
 
     @PatchMapping("/{userId}/inactivate")

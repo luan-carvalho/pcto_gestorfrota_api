@@ -43,7 +43,7 @@ public class VehicleController {
     @PostMapping
     public ResponseEntity<VehicleResponseDto> createVehicle(@Valid @RequestBody VehicleCreationRequestDto request) {
 
-        Vehicle saved = vehicleService.createNewVehicle(mapper.toEntity(request));
+        Vehicle saved = vehicleService.createNewVehicle(request);
         VehicleResponseDto response = mapper.toResponseDto(saved);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()

@@ -2,39 +2,23 @@ package br.edu.ifto.gestorfrotaapi.authentication.mapper;
 
 import java.util.List;
 
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+
 import br.edu.ifto.gestorfrotaapi.authentication.dto.UserCreateResponseDto;
 import br.edu.ifto.gestorfrotaapi.authentication.dto.UserResponseDto;
 import br.edu.ifto.gestorfrotaapi.authentication.model.User;
 
-public class UserMapper {
+@Mapper(componentModel = "spring")
+public interface UserMapper {
 
-    public static UserCreateResponseDto toCreateResponseDto(User user) {
+    @Mapping(source = "role.description", target = "role")
+    UserCreateResponseDto toCreateResponseDto(User user);
 
-        return new UserCreateResponseDto(user.getId(),
-                user.getRegistration(),
-                user.getName(),
-                user.getStatus(),
-                user.getRole(),
-                user.getFirstAccessToken()
+    @Mapping(source = "role.description", target = "role")
+    UserResponseDto toResponseDto(User user);
 
-        );
-
-    }
-
-    public static UserResponseDto toResponseDto(User user) {
-
-        return new UserResponseDto(user.getId(),
-                user.getRegistration(),
-                user.getName(),
-                user.getStatus(),
-                user.getRole());
-
-    }
-
-    public static List<UserResponseDto> toResponseDto(List<User> users) {
-
-        return users.stream().map(UserMapper::toResponseDto).toList();
-
-    }
+    @Mapping(source = "role.description", target = "role")
+    List<UserResponseDto> toResponseDto(List<User> users);
 
 }

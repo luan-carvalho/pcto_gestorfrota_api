@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import br.edu.ifto.gestorfrotaapi.vehicle.dto.VehicleCreationRequestDto;
 import br.edu.ifto.gestorfrotaapi.vehicle.dto.VehicleUpdateRequestDto;
 import br.edu.ifto.gestorfrotaapi.vehicle.exception.VehicleNotFoundException;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.Vehicle;
@@ -33,9 +34,13 @@ public class VehicleService {
 
     }
 
-    public Vehicle createNewVehicle(Vehicle vehicle) {
+    public Vehicle createNewVehicle(VehicleCreationRequestDto request) {
 
-        return repository.save(vehicle);
+        Vehicle newVehicle = new Vehicle(request.model(), request.make(), request.licensePlate(),
+                VehicleType.valueOf(request.type()),
+                request.capacity(), request.mileage());
+
+        return repository.save(newVehicle);
 
     }
 

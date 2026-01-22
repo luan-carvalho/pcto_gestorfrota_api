@@ -6,12 +6,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Entity
-@Getter
-@NoArgsConstructor
 public class Vehicle {
 
     @Id
@@ -27,16 +23,18 @@ public class Vehicle {
     @Enumerated(EnumType.STRING)
     private VehicleStatus status;
 
+    public Vehicle() {
+    }
+
     public Vehicle(String model, String make, String licensePlate, VehicleType type, Integer capacity,
-            Integer mileage,
-            VehicleStatus status) {
+            Integer mileage) {
         this.model = model;
         this.make = make;
         this.licensePlate = licensePlate;
         this.type = type;
         this.capacity = capacity;
         this.mileage = mileage;
-        this.status = status;
+        this.status = VehicleStatus.AVAILABLE;
     }
 
     public void updateVehicleInfo(String model, String make, String licensePlate, VehicleType type, Integer capacity) {
@@ -65,5 +63,37 @@ public class Vehicle {
 
         this.status = VehicleStatus.DECOMISSIONED;
 
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public String getMake() {
+        return make;
+    }
+
+    public String getLicensePlate() {
+        return licensePlate;
+    }
+
+    public VehicleType getType() {
+        return type;
+    }
+
+    public Integer getCapacity() {
+        return capacity;
+    }
+
+    public Integer getMileage() {
+        return mileage;
+    }
+
+    public VehicleStatus getStatus() {
+        return status;
     }
 }

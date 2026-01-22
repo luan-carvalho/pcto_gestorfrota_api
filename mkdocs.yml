@@ -1,0 +1,37 @@
+site_name: Gestor de Frota API | Docs
+site_description: Fleet management API for the State Civil Police
+site_author: Luan Carvalho de Souza
+
+theme:
+  name: material
+  theme:
+  palette: 
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - scheme: default
+      toggle:
+        icon: material/brightness-7 
+        name: Switch to dark mode
+
+  language: en
+  features:
+    - navigation.sections
+    - navigation.instant
+
+
+nav:
+  - Home: index.md
+  - Authentication:
+    - Login: login.md
+    - Verify First Access: first-access-verify.md
+    - Activate User in First Access: first-access-activate.md 
+  - User:
+    - Get all users: get-all-users.md
+    # - Get one user:
+    # - Create one user:
+    # - Update user info:
+    # - Activate user:
+    # - Deactivate user:
+    # - Delete user:
