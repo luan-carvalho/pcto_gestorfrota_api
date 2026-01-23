@@ -105,7 +105,7 @@ public class User {
         if (name != null && !name.isBlank())
             this.name = name;
 
-        if (registration != null && !name.isBlank())
+        if (registration != null && !registration.isBlank())
             this.registration = registration;
 
         if (role != null)

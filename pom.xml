@@ -6,8 +6,8 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.0.1</version>
-		<relativePath /> <!-- lookup parent from repository -->
+		<version>4.0.2</version>
+		<relativePath />
 	</parent>
 	<groupId>br.edu.ifto</groupId>
 	<artifactId>gestorfrotaapi</artifactId>
@@ -72,9 +72,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<scope>runtime</scope>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
 		</dependency>
 
 		<dependency>

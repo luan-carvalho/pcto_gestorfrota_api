@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import br.edu.ifto.gestorfrotaapi.vehicle.dto.VehicleCreationRequestDto;
 import br.edu.ifto.gestorfrotaapi.vehicle.dto.VehicleUpdateRequestDto;
 import br.edu.ifto.gestorfrotaapi.vehicle.exception.VehicleNotFoundException;
-import br.edu.ifto.gestorfrotaapi.vehicle.mapper.VehicleMapper;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.Vehicle;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.VehicleType;
 import br.edu.ifto.gestorfrotaapi.vehicle.repository.VehicleRepository;
@@ -16,11 +15,9 @@ import br.edu.ifto.gestorfrotaapi.vehicle.repository.VehicleRepository;
 public class VehicleService {
 
     private final VehicleRepository repository;
-    private final VehicleMapper mapper;
 
-    public VehicleService(VehicleRepository repository, VehicleMapper mapper) {
+    public VehicleService(VehicleRepository repository) {
         this.repository = repository;
-        this.mapper = mapper;
     }
 
     public List<Vehicle> listAllVehicles() {
