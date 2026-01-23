@@ -12,6 +12,7 @@ import br.edu.ifto.gestorfrotaapi.authentication.exception.RoleNotFoundException
 import br.edu.ifto.gestorfrotaapi.authentication.exception.UserNotFoundException;
 import br.edu.ifto.gestorfrotaapi.authentication.model.Role;
 import br.edu.ifto.gestorfrotaapi.authentication.model.User;
+import br.edu.ifto.gestorfrotaapi.authentication.model.enums.UserStatus;
 import br.edu.ifto.gestorfrotaapi.authentication.repository.RoleRepository;
 import br.edu.ifto.gestorfrotaapi.authentication.repository.UserRepository;
 import br.edu.ifto.gestorfrotaapi.authentication.util.TokenGenerator;
@@ -65,7 +66,14 @@ public class UserService {
     public User update(Long userId, String name, String registration, Long roleId) {
 
         User existingUser = findById(userId);
-        Role role = roleRepo.findById(roleId).orElseThrow(() -> new RoleNotFoundException(roleId));
+
+        Role role = null;
+
+        if (roleId != null) {
+
+            role = roleRepo.findById(roleId).orElseThrow(() -> new RoleNotFoundException(roleId));
+
+        }
 
         existingUser.updateInfo(name, registration, role);
         return userRepo.save(existingUser);
@@ -108,7 +116,7 @@ public class UserService {
     @Transactional
     public void activateFirstAccess(String registration, String token, String rawPassword) {
 
-        User user = userRepo.findByRegistration(registration)
+        User user = userRepo.findByRegistrationAndStatus(registration, UserStatus.FIRST_ACESS)
                 .orElseThrow(() -> new UserNotFoundException(registration));
 
         if (!user.verifyFirstAccess(token)) {

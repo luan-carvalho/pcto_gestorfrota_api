@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,13 +50,13 @@ public class UserController {
         return ResponseEntity.ok(userMapper.toResponseDto(userService.findById(id)));
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<UserResponseDto> update(@PathVariable Long id, @RequestBody @Valid UserUpdateDto dto) {
         return ResponseEntity
                 .ok(userMapper.toResponseDto(userService.update(id, dto.name(), dto.registration(), dto.roleId())));
     }
 
-    @PatchMapping("/{userId}/inactivate")
+    @PatchMapping("/{userId}/deactivate")
     public ResponseEntity<Void> deactivateUser(@PathVariable Long userId) {
         userService.deactivateUser(userId);
         return ResponseEntity.noContent().build();

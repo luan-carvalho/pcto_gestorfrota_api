@@ -23,15 +23,26 @@ theme:
 
 nav:
   - Home: index.md
+  - Getting Ready:
+    - How to run the api: setup.md
+  - API status:
+    - Check status: api-health.md
   - Authentication:
-    - Login: login.md
-    - Verify First Access: first-access-verify.md
-    - Activate User in First Access: first-access-activate.md 
+    - Login: auth/login.md
+    - Verify First Access: auth/first-access-verify.md
+    - Activate User in First Access: auth/first-access-activate.md 
+    - Update user's password: auth/update-password.md 
   - User:
-    - Get all users: get-all-users.md
-    # - Get one user:
-    # - Create one user:
-    # - Update user info:
-    # - Activate user:
-    # - Deactivate user:
-    # - Delete user:
+    - Get all users: user/get-all-users.md
+    - Get one user: user/get-one-user.md
+    - Create one user: user/create-user.md
+    - Update user info: user/update-user-info.md
+    - Activate user: user/activate-user.md
+    - Deactivate user: user/deactivate-user.md
+    - Delete user: user/delete-user.md
+  - Vehicle:
+    - Get all vehicles: vehicle/get-all-vehicles.md
+    - Get one vehicle: vehicle/get-one-vehicle.md
+    - Create one vehicle: vehicle/create-vehicle.md
+    - Update vehicle info: vehicle/update-vehicle-info.md
+    - Delete vehicle: vehicle/delete-vehicle.md

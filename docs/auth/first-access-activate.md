@@ -12,6 +12,8 @@ Activates the user and saves the created password.
 | `token`        | string | Yes      | User's first access token     |
 | `password`     | string | Yes      | User's created password       |
 
+> **⚠️ OBS:** _The password must be 8 characters long._
+
 ---
 
 ### Responses
@@ -20,8 +22,6 @@ Activates the user and saves the created password.
 
 The users has been activated and it's password was saved. The user can, now, login with its credentials.
 
-
 #### ❌ 404 Not Found
 
 There's no user with the given registration.
-

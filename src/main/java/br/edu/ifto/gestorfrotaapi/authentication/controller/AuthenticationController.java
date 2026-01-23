@@ -70,9 +70,7 @@ public class AuthenticationController {
     @PatchMapping("/update-password")
     public ResponseEntity<Void> updatePassword(
             @RequestBody @Valid UpdatePasswordDto dto,
-            @AuthenticationPrincipal UserDetails userDetails // Recupera o usuário do Token automaticamente
-    ) {
-        // userDetails.getUsername() retorna a matrícula que você guardou no token
+            @AuthenticationPrincipal UserDetails userDetails) {
         userService.updatePassword(userDetails.getUsername(), dto);
         return ResponseEntity.noContent().build();
     }

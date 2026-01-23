@@ -22,4 +22,3 @@ The users exists and the it has not yet been activated.
 #### ❌ 404 Not Found
 
 There's no user with the given registration.
-

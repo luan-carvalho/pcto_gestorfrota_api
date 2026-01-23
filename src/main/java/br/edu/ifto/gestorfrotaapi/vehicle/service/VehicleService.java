@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import br.edu.ifto.gestorfrotaapi.vehicle.dto.VehicleCreationRequestDto;
 import br.edu.ifto.gestorfrotaapi.vehicle.dto.VehicleUpdateRequestDto;
 import br.edu.ifto.gestorfrotaapi.vehicle.exception.VehicleNotFoundException;
+import br.edu.ifto.gestorfrotaapi.vehicle.mapper.VehicleMapper;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.Vehicle;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.VehicleType;
 import br.edu.ifto.gestorfrotaapi.vehicle.repository.VehicleRepository;
@@ -15,11 +16,11 @@ import br.edu.ifto.gestorfrotaapi.vehicle.repository.VehicleRepository;
 public class VehicleService {
 
     private final VehicleRepository repository;
+    private final VehicleMapper mapper;
 
-    public VehicleService(VehicleRepository repository) {
-
+    public VehicleService(VehicleRepository repository, VehicleMapper mapper) {
         this.repository = repository;
-
+        this.mapper = mapper;
     }
 
     public List<Vehicle> listAllVehicles() {
@@ -36,9 +37,18 @@ public class VehicleService {
 
     public Vehicle createNewVehicle(VehicleCreationRequestDto request) {
 
-        Vehicle newVehicle = new Vehicle(request.model(), request.make(), request.licensePlate(),
-                VehicleType.valueOf(request.type()),
-                request.capacity(), request.mileage());
+        VehicleType type = null;
+
+        if (request.type() != null)
+            type = VehicleType.valueOf(request.type());
+
+        Vehicle newVehicle = new Vehicle(
+                request.model(),
+                request.make(),
+                request.licensePlate(),
+                type,
+                request.capacity(),
+                request.mileage());
 
         return repository.save(newVehicle);
 
@@ -46,14 +56,18 @@ public class VehicleService {
 
     public Vehicle updateVehicleInfo(Long id, VehicleUpdateRequestDto request) {
 
-        Vehicle toBeUpdated = getVehicleById(id);
-        toBeUpdated.updateVehicleInfo(
-                request.model(),
-                request.make(),
-                request.licensePlate(),
-                VehicleType.valueOf(request.type()),
-                request.capacity());
+        VehicleType type = null;
 
+        if (request.type() != null)
+            type = VehicleType.valueOf(request.type());
+
+        Vehicle toBeUpdated = getVehicleById(id);
+        toBeUpdated.updateInfo(
+                request.licensePlate(),
+                request.make(),
+                request.model(),
+                type,
+                request.capacity());
         return repository.save(toBeUpdated);
 
     }

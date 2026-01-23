@@ -37,22 +37,6 @@ public class Vehicle {
         this.status = VehicleStatus.AVAILABLE;
     }
 
-    public void updateVehicleInfo(String model, String make, String licensePlate, VehicleType type, Integer capacity) {
-
-        this.model = model;
-        this.make = make;
-        this.licensePlate = licensePlate;
-        this.type = type;
-        this.capacity = capacity;
-
-    }
-
-    public void registerNewMileage(Integer newMileage) {
-
-        this.mileage = newMileage;
-
-    }
-
     public void updateStatus(VehicleStatus status) {
 
         this.status = status;
@@ -96,4 +80,25 @@ public class Vehicle {
     public VehicleStatus getStatus() {
         return status;
     }
+
+    public void updateInfo(String licensePlate, String make, String model, VehicleType type, Integer capacity) {
+
+        if (model != null) {
+            this.model = model;
+        }
+        if (make != null) {
+            this.make = make;
+        }
+        if (licensePlate != null) {
+            this.licensePlate = licensePlate;
+        }
+        if (type != null) {
+            this.type = type;
+        }
+        if (capacity != null) {
+            this.capacity = capacity;
+        }
+
+    }
+
 }
