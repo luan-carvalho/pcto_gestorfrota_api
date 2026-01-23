@@ -4,6 +4,8 @@ import java.net.URI;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -40,9 +42,10 @@ public class VehicleController {
     }
 
     @PostMapping
-    public ResponseEntity<VehicleResponseDto> createVehicle(@Valid @RequestBody VehicleCreationRequestDto request) {
+    public ResponseEntity<VehicleResponseDto> createVehicle(@Valid @RequestBody VehicleCreationRequestDto request,
+            @AuthenticationPrincipal UserDetails userDetails) {
 
-        Vehicle saved = vehicleService.createNewVehicle(request);
+        Vehicle saved = vehicleService.createNewVehicle(request, userDetails.getUsername());
         VehicleResponseDto response = mapper.toResponseDto(saved);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -73,7 +76,7 @@ public class VehicleController {
         vehicleService.deactivate(id);
         return ResponseEntity.noContent().build();
     }
-    
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteVehicle(@PathVariable Long id) {
         vehicleService.deleteById(id);

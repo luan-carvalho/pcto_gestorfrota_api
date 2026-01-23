@@ -4,20 +4,25 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import br.edu.ifto.gestorfrotaapi.authentication.exception.UserNotFoundException;
+import br.edu.ifto.gestorfrotaapi.authentication.model.User;
+import br.edu.ifto.gestorfrotaapi.authentication.repository.UserRepository;
 import br.edu.ifto.gestorfrotaapi.vehicle.dto.VehicleCreationRequestDto;
 import br.edu.ifto.gestorfrotaapi.vehicle.dto.VehicleUpdateRequestDto;
 import br.edu.ifto.gestorfrotaapi.vehicle.exception.VehicleNotFoundException;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.Vehicle;
-import br.edu.ifto.gestorfrotaapi.vehicle.model.VehicleType;
+import br.edu.ifto.gestorfrotaapi.vehicle.model.enums.VehicleType;
 import br.edu.ifto.gestorfrotaapi.vehicle.repository.VehicleRepository;
 
 @Service
 public class VehicleService {
 
     private final VehicleRepository repository;
+    private final UserRepository userRepo;
 
-    public VehicleService(VehicleRepository repository) {
+    public VehicleService(VehicleRepository repository, UserRepository userRepo) {
         this.repository = repository;
+        this.userRepo = userRepo;
     }
 
     public List<Vehicle> listAllVehicles() {
@@ -32,9 +37,12 @@ public class VehicleService {
 
     }
 
-    public Vehicle createNewVehicle(VehicleCreationRequestDto request) {
+    public Vehicle createNewVehicle(VehicleCreationRequestDto request, String userRegistration) {
 
         VehicleType type = null;
+
+        User createdBy = userRepo.findByRegistration(userRegistration)
+                .orElseThrow(() -> new UserNotFoundException(userRegistration));
 
         if (request.type() != null)
             type = VehicleType.valueOf(request.type());
@@ -45,7 +53,8 @@ public class VehicleService {
                 request.licensePlate(),
                 type,
                 request.capacity(),
-                request.mileage());
+                request.mileage(),
+                createdBy);
 
         return repository.save(newVehicle);
 
