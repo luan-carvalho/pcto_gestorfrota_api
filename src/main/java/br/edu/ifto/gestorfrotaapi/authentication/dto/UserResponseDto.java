@@ -1,13 +1,12 @@
 package br.edu.ifto.gestorfrotaapi.authentication.dto;
 
-import br.edu.ifto.gestorfrotaapi.authentication.model.Role;
 import br.edu.ifto.gestorfrotaapi.authentication.model.enums.UserStatus;
 
 public record UserResponseDto(
         Long id,
         String registration,
-        String nome,
+        String name,
         UserStatus status,
-        Role role) {
+        String role) {
 
 }

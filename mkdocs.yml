@@ -1,0 +1,48 @@
+site_name: Gestor de Frota API | Docs
+site_description: Fleet management API for the State Civil Police
+site_author: Luan Carvalho de Souza
+
+theme:
+  name: material
+  theme:
+  palette: 
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - scheme: default
+      toggle:
+        icon: material/brightness-7 
+        name: Switch to dark mode
+
+  language: en
+  features:
+    - navigation.sections
+    - navigation.instant
+
+
+nav:
+  - Home: index.md
+  - Getting Ready:
+    - How to run the api: setup.md
+  - API status:
+    - Check status: api-health.md
+  - Authentication:
+    - Login: auth/login.md
+    - Verify First Access: auth/first-access-verify.md
+    - Activate User in First Access: auth/first-access-activate.md 
+    - Update user's password: auth/update-password.md 
+  - User:
+    - Get all users: user/get-all-users.md
+    - Get one user: user/get-one-user.md
+    - Create one user: user/create-user.md
+    - Update user info: user/update-user-info.md
+    - Activate user: user/activate-user.md
+    - Deactivate user: user/deactivate-user.md
+    - Delete user: user/delete-user.md
+  - Vehicle:
+    - Get all vehicles: vehicle/get-all-vehicles.md
+    - Get one vehicle: vehicle/get-one-vehicle.md
+    - Create one vehicle: vehicle/create-vehicle.md
+    - Update vehicle info: vehicle/update-vehicle-info.md
+    - Delete vehicle: vehicle/delete-vehicle.md

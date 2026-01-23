@@ -16,8 +16,6 @@ public class Role implements GrantedAuthority {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String label;
-
     private String description;
 
     @Override
@@ -29,8 +27,8 @@ public class Role implements GrantedAuthority {
         return id;
     }
 
-    public String getLabel() {
-        return label;
+    public String getDescription() {
+        return description;
     }
 
 }

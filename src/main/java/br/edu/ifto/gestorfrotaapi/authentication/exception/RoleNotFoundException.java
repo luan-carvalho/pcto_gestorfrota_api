@@ -1,8 +1,5 @@
 package br.edu.ifto.gestorfrotaapi.authentication.exception;
 
-import lombok.Getter;
-
-@Getter
 public class RoleNotFoundException extends RuntimeException {
 
     private final Long id;
@@ -14,4 +11,13 @@ public class RoleNotFoundException extends RuntimeException {
         this.id = id;
         this.registration = null;
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getRegistration() {
+        return registration;
+    }
+
 }

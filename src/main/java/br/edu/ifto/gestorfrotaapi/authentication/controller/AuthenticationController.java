@@ -64,15 +64,13 @@ public class AuthenticationController {
         CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
         var token = tokenService.generateToken(userDetails.getUsername());
         return ResponseEntity
-                .ok(new LoginResponseDto(token, "Bearer", userDetails.getFirstName(), userDetails.getRoleLabel()));
+                .ok(new LoginResponseDto(token, "Bearer", userDetails.getFirstName(), userDetails.getRole()));
     }
 
     @PatchMapping("/update-password")
     public ResponseEntity<Void> updatePassword(
             @RequestBody @Valid UpdatePasswordDto dto,
-            @AuthenticationPrincipal UserDetails userDetails // Recupera o usuário do Token automaticamente
-    ) {
-        // userDetails.getUsername() retorna a matrícula que você guardou no token
+            @AuthenticationPrincipal UserDetails userDetails) {
         userService.updatePassword(userDetails.getUsername(), dto);
         return ResponseEntity.noContent().build();
     }

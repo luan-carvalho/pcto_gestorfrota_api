@@ -23,4 +23,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByRegistration(String registration);
 
+    Optional<User> findByRegistrationAndStatus(String registration, UserStatus status);
+
 }

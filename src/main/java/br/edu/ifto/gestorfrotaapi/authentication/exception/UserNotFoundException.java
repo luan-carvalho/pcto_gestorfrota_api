@@ -1,8 +1,5 @@
 package br.edu.ifto.gestorfrotaapi.authentication.exception;
 
-import lombok.Getter;
-
-@Getter
 public class UserNotFoundException extends RuntimeException {
 
     private final Long id;
@@ -20,6 +17,14 @@ public class UserNotFoundException extends RuntimeException {
         super("User with registration " + registration + " was not found");
         this.registration = registration;
         this.id = null;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getRegistration() {
+        return registration;
     }
 
 }

@@ -13,11 +13,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.Getter;
 
 @Entity
 @Table(name = "users")
-@Getter
 public class User {
 
     @Id
@@ -27,7 +25,7 @@ public class User {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String registration;
 
     private String password;
@@ -70,11 +68,8 @@ public class User {
 
     public void deactivate() {
 
-        if (this.status == UserStatus.FIRST_ACESS && firstAccessToken != null) {
-
-            throw new StatusUpdateException("Cannot change the status of a user with the first access pending");
-
-        }
+        if (this.status == UserStatus.ACTIVE)
+            throw new StatusUpdateException("User already inactive");
 
         this.status = UserStatus.INACTIVE;
 
@@ -87,6 +82,9 @@ public class User {
             throw new StatusUpdateException("Cannot change the status of a user with the first access pending");
 
         }
+
+        if (this.status == UserStatus.ACTIVE)
+            throw new StatusUpdateException("User already active");
 
         this.status = UserStatus.ACTIVE;
 
@@ -103,9 +101,16 @@ public class User {
     }
 
     public void updateInfo(String name, String registration, Role role) {
-        this.name = name;
-        this.registration = registration;
-        this.role = role;
+
+        if (name != null && !name.isBlank())
+            this.name = name;
+
+        if (registration != null && !name.isBlank())
+            this.registration = registration;
+
+        if (role != null)
+            this.role = role;
+
     }
 
     public boolean verifyFirstAccess(String token) {
@@ -120,6 +125,34 @@ public class User {
         this.status = UserStatus.ACTIVE;
         this.firstAccessToken = null;
 
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getRegistration() {
+        return registration;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public UserStatus getStatus() {
+        return status;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public String getFirstAccessToken() {
+        return firstAccessToken;
     }
 
 }
