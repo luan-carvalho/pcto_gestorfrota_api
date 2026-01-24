@@ -1,22 +1,27 @@
 package br.edu.ifto.gestorfrotaapi.authentication.model;
 
+import java.util.Collection;
+import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import br.edu.ifto.gestorfrotaapi.authentication.exception.StatusUpdateException;
+import br.edu.ifto.gestorfrotaapi.authentication.model.enums.Role;
 import br.edu.ifto.gestorfrotaapi.authentication.model.enums.UserStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,8 +39,7 @@ public class User {
     @Column(nullable = false)
     private UserStatus status;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "role_id", nullable = false)
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     private String firstAccessToken;
@@ -139,10 +143,6 @@ public class User {
         return registration;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
     public UserStatus getStatus() {
         return status;
     }
@@ -155,4 +155,24 @@ public class User {
         return firstAccessToken;
     }
 
+    public boolean hasRole(Role role) {
+
+        return this.role == role;
+
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.registration;
+    }
 }

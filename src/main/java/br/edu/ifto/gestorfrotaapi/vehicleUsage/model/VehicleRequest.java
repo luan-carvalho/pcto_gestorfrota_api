@@ -72,6 +72,9 @@ public class VehicleRequest {
     public VehicleRequest(User requester, Vehicle vehicle, RequestPriority priority, String processNumber,
             LocalDateTime startDateTime, LocalDateTime endDateTime, VehicleRequestPurpose purpose) {
 
+        if (startDateTime.isAfter(endDateTime))
+            throw new IllegalArgumentException("Start date time cannot be after end date time");
+
         this.requester = requester;
         this.vehicle = vehicle;
         this.priority = priority;

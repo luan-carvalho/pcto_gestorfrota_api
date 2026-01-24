@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import br.edu.ifto.gestorfrotaapi.authentication.model.User;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.enums.MileageEntrySource;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.enums.RequestStatus;
+import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.enums.VehicleUsageStatus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -27,6 +28,8 @@ public class VehicleUsage {
     @JoinColumn(name = "driver_id", nullable = false)
     private User driver;
 
+    private VehicleUsageStatus status;
+
     private LocalDateTime checkInAt;
     private LocalDateTime checkOutAt;
     private Integer mileageStart;
@@ -38,6 +41,7 @@ public class VehicleUsage {
     public VehicleUsage(VehicleRequest vehicleRequest, User driver) {
         this.vehicleRequest = vehicleRequest;
         this.driver = driver;
+        this.status = VehicleUsageStatus.NOT_STARTED;
     }
 
     public void checkIn(Integer mileageStart) {
@@ -56,6 +60,7 @@ public class VehicleUsage {
 
         this.mileageStart = mileageStart;
         this.checkInAt = LocalDateTime.now();
+        this.status = VehicleUsageStatus.STARTED;
 
     }
 
@@ -81,6 +86,15 @@ public class VehicleUsage {
                 MileageEntrySource.USAGE_CHECKOUT,
                 driver,
                 notes != null ? notes : "Checkout from  Vehicle Request #" + vehicleRequest.getId());
+        this.status = VehicleUsageStatus.FINISHED;
+
+    }
+
+    public void cancel() {
+
+        // add more logic later
+
+        this.status = VehicleUsageStatus.CANCELED;
 
     }
 
@@ -110,6 +124,10 @@ public class VehicleUsage {
 
     public Integer getMileageEnd() {
         return mileageEnd;
+    }
+
+    public VehicleUsageStatus getStatus() {
+        return status;
     }
 
 }

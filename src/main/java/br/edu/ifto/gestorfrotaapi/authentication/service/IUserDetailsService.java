@@ -6,7 +6,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import br.edu.ifto.gestorfrotaapi.authentication.exception.UserNotFoundException;
-import br.edu.ifto.gestorfrotaapi.authentication.model.CustomUserDetails;
 import br.edu.ifto.gestorfrotaapi.authentication.model.User;
 import br.edu.ifto.gestorfrotaapi.authentication.model.enums.UserStatus;
 import br.edu.ifto.gestorfrotaapi.authentication.repository.UserRepository;
@@ -32,7 +31,7 @@ public class IUserDetailsService implements UserDetailsService {
 
         }
 
-        return new CustomUserDetails(user);
+        return user;
 
     }
 }

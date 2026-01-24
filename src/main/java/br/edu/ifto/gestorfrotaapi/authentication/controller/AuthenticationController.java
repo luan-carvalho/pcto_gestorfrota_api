@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,7 +17,7 @@ import br.edu.ifto.gestorfrotaapi.authentication.dto.LoginDto;
 import br.edu.ifto.gestorfrotaapi.authentication.dto.LoginResponseDto;
 import br.edu.ifto.gestorfrotaapi.authentication.dto.UpdatePasswordDto;
 import br.edu.ifto.gestorfrotaapi.authentication.dto.VerifyFirstAccessDto;
-import br.edu.ifto.gestorfrotaapi.authentication.model.CustomUserDetails;
+import br.edu.ifto.gestorfrotaapi.authentication.model.User;
 import br.edu.ifto.gestorfrotaapi.authentication.service.TokenService;
 import br.edu.ifto.gestorfrotaapi.authentication.service.UserService;
 import jakarta.validation.Valid;
@@ -61,17 +60,17 @@ public class AuthenticationController {
     public ResponseEntity<LoginResponseDto> login(@RequestBody @Valid LoginDto data) {
         var authToken = new UsernamePasswordAuthenticationToken(data.registration(), data.password());
         var auth = authManager.authenticate(authToken);
-        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
-        var token = tokenService.generateToken(userDetails.getUsername());
+        User user = (User) auth.getPrincipal();
+        var token = tokenService.generateToken(user.getUsername());
         return ResponseEntity
-                .ok(new LoginResponseDto(token, "Bearer", userDetails.getFirstName(), userDetails.getRole()));
+                .ok(new LoginResponseDto(token, "Bearer", user.getFirstName(), user.getRole().name()));
     }
 
     @PatchMapping("/update-password")
     public ResponseEntity<Void> updatePassword(
             @RequestBody @Valid UpdatePasswordDto dto,
-            @AuthenticationPrincipal UserDetails userDetails) {
-        userService.updatePassword(userDetails.getUsername(), dto);
+            @AuthenticationPrincipal User user) {
+        userService.updatePassword(dto, user);
         return ResponseEntity.noContent().build();
     }
 

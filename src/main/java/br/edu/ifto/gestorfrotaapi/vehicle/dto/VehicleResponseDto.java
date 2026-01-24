@@ -7,6 +7,6 @@ public record VehicleResponseDto(
         String type,
         String status,
         Integer capacity,
-        Integer mileage) {
+        Integer currentMileage) {
 
 }

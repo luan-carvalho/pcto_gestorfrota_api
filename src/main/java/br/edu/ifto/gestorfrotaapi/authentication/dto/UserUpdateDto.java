@@ -1,8 +1,10 @@
 package br.edu.ifto.gestorfrotaapi.authentication.dto;
 
+import br.edu.ifto.gestorfrotaapi.authentication.model.enums.Role;
+
 public record UserUpdateDto(
                 String name,
                 String registration,
-                Long roleId) {
+                Role role) {
 
 }

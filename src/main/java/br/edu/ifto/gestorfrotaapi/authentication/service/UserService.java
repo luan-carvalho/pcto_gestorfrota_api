@@ -1,19 +1,18 @@
 package br.edu.ifto.gestorfrotaapi.authentication.service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.edu.ifto.gestorfrotaapi.authentication.dto.UpdatePasswordDto;
-import br.edu.ifto.gestorfrotaapi.authentication.exception.RoleNotFoundException;
+import br.edu.ifto.gestorfrotaapi.authentication.dto.UserCreateDto;
+import br.edu.ifto.gestorfrotaapi.authentication.dto.UserUpdateDto;
 import br.edu.ifto.gestorfrotaapi.authentication.exception.UserNotFoundException;
-import br.edu.ifto.gestorfrotaapi.authentication.model.Role;
 import br.edu.ifto.gestorfrotaapi.authentication.model.User;
 import br.edu.ifto.gestorfrotaapi.authentication.model.enums.UserStatus;
-import br.edu.ifto.gestorfrotaapi.authentication.repository.RoleRepository;
 import br.edu.ifto.gestorfrotaapi.authentication.repository.UserRepository;
 import br.edu.ifto.gestorfrotaapi.authentication.util.TokenGenerator;
 import jakarta.transaction.Transactional;
@@ -22,19 +21,11 @@ import jakarta.transaction.Transactional;
 public class UserService {
 
     private final UserRepository userRepo;
-    private final RoleRepository roleRepo;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepo, RoleRepository roleRepo, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepo, PasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
-        this.roleRepo = roleRepo;
         this.passwordEncoder = passwordEncoder;
-    }
-
-    public List<Role> findAllRoles() {
-
-        return roleRepo.findAll();
-
     }
 
     public List<User> findAll() {
@@ -49,37 +40,24 @@ public class UserService {
 
     }
 
-    public Role findRoleById(Long roleId) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'FLEET_MANAGER')")
+    public User create(UserCreateDto dto) {
 
-        return roleRepo.findById(roleId).orElseThrow(() -> new NoSuchElementException("Role not found"));
-
-    }
-
-    public User create(String name, String registration, Long roleId) {
-
-        Role role = roleRepo.findById(roleId).orElseThrow(() -> new RoleNotFoundException(roleId));
-        User newUser = new User(name, registration, TokenGenerator.generateToken(), role);
+        User newUser = new User(dto.name(), dto.registration(), TokenGenerator.generateToken(), dto.role());
         return userRepo.save(newUser);
 
     }
 
-    public User update(Long userId, String name, String registration, Long roleId) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'FLEET_MANAGER')")
+    public User update(Long userId, UserUpdateDto dto) {
 
         User existingUser = findById(userId);
-
-        Role role = null;
-
-        if (roleId != null) {
-
-            role = roleRepo.findById(roleId).orElseThrow(() -> new RoleNotFoundException(roleId));
-
-        }
-
-        existingUser.updateInfo(name, registration, role);
+        existingUser.updateInfo(dto.name(), dto.registration(), dto.role());
         return userRepo.save(existingUser);
 
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'FLEET_MANAGER')")
     public void activateUser(Long id) {
 
         User user = userRepo.findById(id).orElseThrow(() -> new UserNotFoundException(id));
@@ -88,6 +66,7 @@ public class UserService {
 
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'FLEET_MANAGER')")
     public void deactivateUser(Long id) {
 
         User user = userRepo.findById(id).orElseThrow(() -> new UserNotFoundException(id));
@@ -96,12 +75,11 @@ public class UserService {
 
     }
 
-    public void updatePassword(Long id, String newPassword) {
+    public void updatePassword(UpdatePasswordDto dto, User loggedUser) {
 
-        User user = userRepo.findById(id).orElseThrow(() -> new UserNotFoundException(id));
-        String encodedPassword = passwordEncoder.encode(newPassword);
-        user.updatePassword(encodedPassword);
-        userRepo.save(user);
+        String encodedPassword = passwordEncoder.encode(dto.newPassword());
+        loggedUser.updatePassword(encodedPassword);
+        userRepo.save(loggedUser);
 
     }
 
@@ -128,6 +106,7 @@ public class UserService {
         userRepo.save(user);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'FLEET_MANAGER')")
     public void delete(Long id) {
         User user = userRepo.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         userRepo.delete(user);

@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import br.edu.ifto.gestorfrotaapi.authentication.exception.UserNotFoundException;
-import br.edu.ifto.gestorfrotaapi.authentication.model.CustomUserDetails;
 import br.edu.ifto.gestorfrotaapi.authentication.repository.UserRepository;
 import br.edu.ifto.gestorfrotaapi.authentication.service.TokenService;
 import jakarta.servlet.FilterChain;
@@ -38,12 +37,12 @@ public class SecurityFilter extends OncePerRequestFilter {
 
             var registration = tokenService.validateToken(token);
 
-            UserDetails user = new CustomUserDetails(userRepository.findByRegistration(registration)
-                    .orElseThrow(() -> new UserNotFoundException(registration)));
+            UserDetails user = userRepository.findByRegistration(registration)
+                    .orElseThrow(() -> new UserNotFoundException(registration));
 
             var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            
+
         }
 
         filterChain.doFilter(request, response);

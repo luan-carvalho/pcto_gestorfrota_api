@@ -36,7 +36,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<UserCreateResponseDto> create(@RequestBody @Valid UserCreateDto dto) {
         UserCreateResponseDto response = userMapper
-                .toCreateResponseDto(userService.create(dto.name(), dto.registration(), dto.roleId()));
+                .toCreateResponseDto(userService.create(dto));
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -53,7 +53,7 @@ public class UserController {
     @PatchMapping("/{id}")
     public ResponseEntity<UserResponseDto> update(@PathVariable Long id, @RequestBody @Valid UserUpdateDto dto) {
         return ResponseEntity
-                .ok(userMapper.toResponseDto(userService.update(id, dto.name(), dto.registration(), dto.roleId())));
+                .ok(userMapper.toResponseDto(userService.update(id, dto)));
     }
 
     @PatchMapping("/{userId}/deactivate")
