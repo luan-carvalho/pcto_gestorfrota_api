@@ -4,11 +4,11 @@ import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification.hasPriority;
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification.hasProcessNumber;
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification.hasPurpose;
+import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification.hasRequestId;
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification.hasRequesterName;
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification.hasStatus;
+import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification.hasVehicleDescription;
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification.hasVehicleLicensePlate;
-import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification.hasVehicleMake;
-import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification.hasVehicleModel;
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification.usageBetween;
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleUsageSpecification.checkInBetween;
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleUsageSpecification.checkOutBetween;
@@ -31,6 +31,8 @@ import br.edu.ifto.gestorfrotaapi.vehicle.model.Vehicle;
 import br.edu.ifto.gestorfrotaapi.vehicle.repository.VehicleRepository;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.CheckInDto;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.CheckOutDto;
+import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.UserVehicleRequestFilter;
+import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.UserVehicleUsageFilter;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.VehicleRequestApprovalDto;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.VehicleRequestCreateDto;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.VehicleRequestFilter;
@@ -108,9 +110,9 @@ public class VehicleUsageFacade {
 
                 Specification<VehicleRequest> spec = Specification
                                 .where(hasRequesterName(filter.requesterName()))
+                                .and(hasRequestId(filter.requestId()))
                                 .and(hasVehicleLicensePlate(filter.vehicleLicensePlate()))
-                                .and(hasVehicleMake(filter.vehicleMake()))
-                                .and(hasVehicleModel(filter.vehicleModel()))
+                                .and(hasVehicleDescription(filter.vehicleDescription()))
                                 .and(hasStatus(filter.status()))
                                 .and(hasPriority(filter.priority()))
                                 .and(hasPurpose(filter.purpose()))
@@ -142,9 +144,9 @@ public class VehicleUsageFacade {
         public Page<VehicleUsage> searchForVehicleUsage(VehicleUsageFilter filter, Pageable pageable) {
 
                 Specification<VehicleUsage> spec = Specification
-                                .where(VehicleUsageSpecification.hasDriverId(filter.driverId()))
+                                .where(VehicleUsageSpecification.hasDriverName(filter.driverName()))
                                 .and(hasVehicleRequestId(filter.requestId()))
-                                .and(VehicleUsageSpecification.hasVehicleId(filter.vehicleId()))
+                                .and(VehicleUsageSpecification.hasVehicleDescription(filter.vehicleDescription()))
                                 .and(checkInBetween(filter.checkInFrom(), filter.checkInTo()))
                                 .and(checkOutBetween(filter.checkOutFrom(), filter.checkOutTo()))
                                 .and(VehicleUsageSpecification.hasStatus(filter.status()));
@@ -204,6 +206,35 @@ public class VehicleUsageFacade {
                 VehicleRequest request = findById(requestId);
                 request.cancel(canceledBy, notes);
                 requestRepo.save(request);
+
+        }
+
+        public Page<VehicleRequest> getUserRequests(UserVehicleRequestFilter filter, User user, Pageable pageable) {
+
+                Specification<VehicleRequest> spec = Specification
+                                .where(hasRequestId(filter.requestId()))
+                                .and(hasVehicleDescription(filter.vehicleDescription()))
+                                .and(hasStatus(filter.status()))
+                                .and(hasPriority(filter.priority()))
+                                .and(hasPurpose(filter.purpose()))
+                                .and(hasProcessNumber(filter.processNumber()))
+                                .and(usageBetween(filter.usageFrom(), filter.usageTo()));
+
+                return requestRepo.findAll(spec, pageable);
+
+        }
+
+        public Page<VehicleUsage> getDriverUsages(UserVehicleUsageFilter filter, User user, Pageable pageable) {
+
+                Specification<VehicleUsage> spec = Specification
+                                .where(VehicleUsageSpecification.hasDriverId(user.getId()))
+                                .and(VehicleUsageSpecification.hasRequesterName(filter.requesterName()))
+                                .and(VehicleUsageSpecification.hasVehicleRequestId(filter.requestId()))
+                                .and(VehicleUsageSpecification.hasVehicleDescription(filter.vehicleDescription()))
+                                .and(VehicleUsageSpecification.hasStatus(filter.status()))
+                                .and(VehicleUsageSpecification.usageBetween(filter.usageFrom(), filter.usageTo()));
+
+                return usageRepo.findAll(spec, pageable);
 
         }
 }

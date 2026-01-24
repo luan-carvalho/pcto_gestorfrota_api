@@ -13,18 +13,66 @@ public class VehicleUsageSpecification {
         return (root, query, cb) -> driverId == null ? null : cb.equal(root.get("driver").get("id"), driverId);
     }
 
+    public static Specification<VehicleUsage> hasRequesterName(String requesterName) {
+        return (root, query, cb) -> {
+
+            if (requesterName == null || requesterName.isBlank()) {
+
+                return null;
+
+            }
+
+            var searchName = cb.lower(root.get("requester").get("name"));
+            return cb.like(searchName, "%" + requesterName.toLowerCase() + "%");
+
+        };
+    }
+
+    public static Specification<VehicleUsage> hasDriverName(String driverName) {
+        return (root, query, cb) -> {
+
+            if (driverName == null || driverName.isBlank()) {
+
+                return null;
+
+            }
+
+            var searchName = cb.lower(root.get("requester").get("name"));
+            return cb.like(searchName, "%" + driverName.toLowerCase() + "%");
+
+        };
+    }
+
     public static Specification<VehicleUsage> hasVehicleRequestId(Long requestId) {
         return (root, query, cb) -> requestId == null ? null
                 : cb.equal(root.get("vehicleRequest").get("id"), requestId);
     }
 
-    public static Specification<VehicleUsage> hasVehicleId(Long vehicleId) {
-        return (root, query, cb) -> vehicleId == null ? null
-                : cb.equal(
-                        root.get("vehicleRequest")
-                                .get("vehicle")
-                                .get("id"),
-                        vehicleId);
+    public static Specification<VehicleUsage> hasVehicleDescription(String description) {
+
+        return (root, query, cb) -> {
+
+            if (description == null || description.isBlank()) {
+
+                return null;
+
+            }
+
+            var pattern = "%" + description.toLowerCase() + "%";
+            var licensePlate = cb.lower(root.get("vehicleRequest").get("vehicle").get("licensePlate"));
+            var make = cb.lower(root.get("vehicleRequest").get("vehicle").get("make"));
+            var model = cb.lower(root.get("vehicleRequest").get("vehicle").get("model"));
+
+            var concat = cb.concat(
+                    cb.concat(make, " "),
+                    cb.concat(model, ""));
+
+            var searchDescription = cb.concat(concat, licensePlate);
+
+            return cb.like(searchDescription, pattern);
+
+        };
+
     }
 
     public static Specification<VehicleUsage> checkInBetween(
@@ -54,6 +102,21 @@ public class VehicleUsageSpecification {
             if (start != null)
                 return cb.greaterThanOrEqualTo(root.get("checkOutAt"), start);
             return cb.lessThanOrEqualTo(root.get("checkOutAt"), end);
+        };
+    }
+
+    public static Specification<VehicleUsage> usageBetween(
+            LocalDateTime start,
+            LocalDateTime end) {
+
+        return (root, query, cb) -> {
+            if (start == null && end == null)
+                return null;
+            if (start != null && end != null)
+                return cb.between(root.get("vehicleRequest").get("startDateTime"), start, end);
+            if (start != null)
+                return cb.greaterThanOrEqualTo(root.get("vehicleRequest").get("startDateTime"), start);
+            return cb.lessThanOrEqualTo(root.get("vehicleRequest").get("endDateTime"), end);
         };
     }
 

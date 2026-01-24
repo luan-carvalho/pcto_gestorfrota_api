@@ -8,10 +8,11 @@ import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.enums.VehicleRequestPurpose
 
 public record VehicleRequestFilter(
 
+                Long requestId,
+
                 String requesterName,
                 String vehicleLicensePlate,
-                String vehicleMake,
-                String vehicleModel,
+                String vehicleDescription,
                 
                 RequestStatus status,
                 RequestPriority priority,

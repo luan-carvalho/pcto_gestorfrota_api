@@ -11,21 +11,66 @@ import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.enums.VehicleRequestPurpose
 
 public class VehicleRequestSpecification {
 
+    public static Specification<VehicleRequest> hasRequestId(Long requestId) {
+
+        return (root, query, cb) -> requestId == null ? null : cb.equal(root.get("id"), requestId);
+
+    }
+
     public static Specification<VehicleRequest> hasRequesterName(String requesterName) {
-        return (root, query, cb) -> requesterName == null ? null
-                : cb.equal(root.get("requester").get("name"), requesterName);
+        return (root, query, cb) -> {
+
+            if (requesterName == null || requesterName.isBlank()) {
+
+                return null;
+
+            }
+
+            var searchName = cb.lower(root.get("requester").get("name"));
+            return cb.like(searchName, "%" + requesterName.toLowerCase() + "%");
+
+        };
     }
 
     public static Specification<VehicleRequest> hasVehicleLicensePlate(String licensePlate) {
-        return (root, query, cb) -> licensePlate == null ? null : cb.equal(root.get("vehicle").get("licensePlate"), licensePlate);
+        return (root, query, cb) -> {
+
+            if (licensePlate == null || licensePlate.isBlank()) {
+
+                return null;
+
+            }
+
+            return cb.like(cb.lower(root.get("vehicle").get("licensePlate")), "%" + licensePlate.toLowerCase() + "%");
+
+        };
     }
 
-    public static Specification<VehicleRequest> hasVehicleMake(String make) {
-        return (root, query, cb) -> make == null ? null : cb.equal(root.get("vehicle").get("make"), make);
-    }
+    public static Specification<VehicleRequest> hasVehicleDescription(String description) {
 
-    public static Specification<VehicleRequest> hasVehicleModel(String model) {
-        return (root, query, cb) -> model == null ? null : cb.equal(root.get("vehicle").get("model"), model);
+        return (root, query, cb) -> {
+
+            if (description == null || description.isBlank()) {
+
+                return null;
+
+            }
+
+            var pattern = "%" + description.toLowerCase() + "%";
+            var licensePlate = cb.lower(root.get("vehicleRequest").get("vehicle").get("licensePlate"));
+            var make = cb.lower(root.get("vehicleRequest").get("vehicle").get("make"));
+            var model = cb.lower(root.get("vehicleRequest").get("vehicle").get("model"));
+
+            var concat = cb.concat(
+                    cb.concat(make, " "),
+                    cb.concat(model, ""));
+                    
+            var searchDescription = cb.concat(concat, licensePlate);
+
+            return cb.like(searchDescription, pattern);
+
+        };
+
     }
 
     public static Specification<VehicleRequest> hasStatus(RequestStatus status) {

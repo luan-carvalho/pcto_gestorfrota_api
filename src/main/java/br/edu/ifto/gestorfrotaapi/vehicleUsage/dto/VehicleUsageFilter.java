@@ -6,18 +6,20 @@ import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.enums.VehicleUsageStatus;
 
 public record VehicleUsageFilter(
 
-        Long requestId,
-        Long vehicleId,
-        Long driverId,
+                Long requestId,
 
-        LocalDateTime checkInFrom,
-        LocalDateTime checkInTo,
+                String vehicleDescription,
+                String driverName,
+                String requesterName,
 
-        LocalDateTime checkOutFrom,
-        LocalDateTime checkOutTo,
+                LocalDateTime checkInFrom,
+                LocalDateTime checkInTo,
 
-        Integer mileageStartMin,
-        Integer mileageEndMax,
+                LocalDateTime checkOutFrom,
+                LocalDateTime checkOutTo,
 
-        VehicleUsageStatus status) {
+                Integer mileageStartMin,
+                Integer mileageEndMax,
+
+                VehicleUsageStatus status) {
 }
