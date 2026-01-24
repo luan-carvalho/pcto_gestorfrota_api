@@ -9,7 +9,7 @@ public class RequestConflictException extends RuntimeException {
 
     public RequestConflictException(LocalDateTime startDateTime, LocalDateTime endDateTime) {
 
-        super("The vehicle is already in use or there is an approved request for this vehicle");
+        super("The vehicle is already in use or there is an approved request for this vehicle in the selected period");
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
 

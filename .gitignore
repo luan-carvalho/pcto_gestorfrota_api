@@ -38,5 +38,6 @@ build/
 
 ### VS Code ###
 .vscode/
-project.txt
+local.txt
 TO-DO.md
+TODO.md

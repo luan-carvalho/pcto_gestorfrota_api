@@ -17,6 +17,12 @@ public class VehicleRequestSpecification {
 
     }
 
+    public static Specification<VehicleRequest> hasRequesterId(Long requesterId) {
+
+        return (root, query, cb) -> requesterId == null ? null : cb.equal(root.get("requester").get("id"), requesterId);
+
+    }
+
     public static Specification<VehicleRequest> hasRequesterName(String requesterName) {
         return (root, query, cb) -> {
 

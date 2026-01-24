@@ -45,6 +45,7 @@ import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.VehicleUsage;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.enums.RequestStatus;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.VehicleRequestRepository;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.VehicleUsageRepository;
+import br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleUsageSpecification;
 import jakarta.transaction.Transactional;
 
@@ -91,6 +92,10 @@ public class VehicleUsageFacade {
                                 .findById(dto.requestedVehicleId())
                                 .orElseThrow(() -> new VehicleNotFoundException(dto.requestedVehicleId()));
 
+                if (!vehicle.isActive()) {
+
+                }
+
                 VehicleRequest created = requestRepo.save(new VehicleRequest(
                                 requester,
                                 vehicle,
@@ -132,6 +137,8 @@ public class VehicleUsageFacade {
 
                 User driver = userRepo.findById(dto.driverId()).orElseThrow(
                                 () -> new UserNotFoundException(dto.driverId()));
+
+                boolean hasDriverConflict; //implementar validação de motorista
 
                 request.approve(approver, driver, dto.notes());
                 requestRepo.save(request);
@@ -213,6 +220,7 @@ public class VehicleUsageFacade {
 
                 Specification<VehicleRequest> spec = Specification
                                 .where(hasRequestId(filter.requestId()))
+                                .and(VehicleRequestSpecification.hasRequesterId(user.getId()))
                                 .and(hasVehicleDescription(filter.vehicleDescription()))
                                 .and(hasStatus(filter.status()))
                                 .and(hasPriority(filter.priority()))

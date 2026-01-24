@@ -138,6 +138,12 @@ public class Vehicle {
 
     }
 
+    public boolean isActive() {
+
+        return this.status == VehicleStatus.ACTIVE;
+
+    }
+
     public void updateInfo(String licensePlate, String make, String model, VehicleType type, Integer capacity) {
 
         if (model != null) {
@@ -156,6 +162,11 @@ public class Vehicle {
             this.capacity = capacity;
         }
 
+    }
+
+    @Override
+    public String toString() {
+        return this.make + " " + this.model + "[" + this.licensePlate + "]";
     }
 
 }
