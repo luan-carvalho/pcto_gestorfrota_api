@@ -28,7 +28,7 @@ public class SecurityConfig {
                         .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers("/auth/login").permitAll()
                         .requestMatchers("/auth/first-access/**").permitAll()
-                        .requestMatchers("/admin/**").hasAnyRole("ADMIN", "FLEET_MANAGER")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

@@ -10,13 +10,17 @@ import org.springframework.security.core.userdetails.UserDetails;
 import br.edu.ifto.gestorfrotaapi.authentication.exception.StatusUpdateException;
 import br.edu.ifto.gestorfrotaapi.authentication.model.enums.Role;
 import br.edu.ifto.gestorfrotaapi.authentication.model.enums.UserStatus;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
 
 @Entity
@@ -39,8 +43,11 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private UserStatus status;
 
+    @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    private Role role;
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "role")
+    private List<Role> roles;
 
     private String firstAccessToken;
 
@@ -48,12 +55,12 @@ public class User implements UserDetails {
 
     }
 
-    public User(String name, String registration, String firstAccessToken, Role role) {
+    public User(String name, String registration, String firstAccessToken, List<Role> roles) {
 
         this.name = name;
         this.registration = registration;
         this.firstAccessToken = firstAccessToken;
-        this.role = role;
+        this.roles = roles;
         this.status = UserStatus.FIRST_ACESS;
 
     }
@@ -104,7 +111,7 @@ public class User implements UserDetails {
         this.password = newPassword;
     }
 
-    public void updateInfo(String name, String registration, Role role) {
+    public void updateInfo(String name, String registration, List<Role> roles) {
 
         if (name != null && !name.isBlank())
             this.name = name;
@@ -112,8 +119,8 @@ public class User implements UserDetails {
         if (registration != null && !registration.isBlank())
             this.registration = registration;
 
-        if (role != null)
-            this.role = role;
+        if (roles != null && !roles.isEmpty())
+            this.roles = roles;
 
     }
 
@@ -147,8 +154,8 @@ public class User implements UserDetails {
         return status;
     }
 
-    public Role getRole() {
-        return role;
+    public List<Role> getRoles() {
+        return roles;
     }
 
     public String getFirstAccessToken() {
@@ -157,13 +164,16 @@ public class User implements UserDetails {
 
     public boolean hasRole(Role role) {
 
-        return this.role == role;
+        return this.roles.contains(role);
 
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
+        return this.roles
+                .stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
+                .toList();
     }
 
     @Override
@@ -175,4 +185,36 @@ public class User implements UserDetails {
     public String getUsername() {
         return this.registration;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((registration == null) ? 0 : registration.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        User other = (User) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        if (registration == null) {
+            if (other.registration != null)
+                return false;
+        } else if (!registration.equals(other.registration))
+            return false;
+        return true;
+    }
+
 }

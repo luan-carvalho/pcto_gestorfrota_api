@@ -32,6 +32,9 @@ public class VehicleRequestHistory {
 
     private LocalDateTime performedAt;
 
+    public VehicleRequestHistory() {
+    }
+
     public VehicleRequestHistory(VehicleRequest request, User performedBy, RequestAction action,
             LocalDateTime performedAt, String notes) {
         this.request = request;

@@ -1,5 +1,7 @@
 package br.edu.ifto.gestorfrotaapi.vehicleUsage.dto;
 
-public record CheckOutDto(Long vehicleUsageId, String driverRegistration, Integer endMileage, String notes) {
+import jakarta.validation.constraints.NotNull;
+
+public record CheckOutDto(@NotNull Integer endMileage, String notes) {
 
 }

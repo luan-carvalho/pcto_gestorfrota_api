@@ -22,8 +22,8 @@ public interface VehicleRequestRepository
                         FROM VehicleRequest v
                         WHERE v.vehicle.id = :vehicleId
                         AND v.status IN :activeStatuses
-                        AND v.endDate > :requestedStartDate
-                        AND v.startDate < :requestedEndDate
+                        AND v.endDateTime > :requestedStartDate
+                        AND v.startDateTime < :requestedEndDate
                         """)
         boolean existsConflict(
                         @Param("requestedStartDate") LocalDateTime requestedStartDate,

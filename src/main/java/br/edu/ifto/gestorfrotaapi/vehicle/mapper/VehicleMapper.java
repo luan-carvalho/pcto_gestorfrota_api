@@ -11,7 +11,6 @@ import br.edu.ifto.gestorfrotaapi.vehicle.model.Vehicle;
 @Mapper(componentModel = "spring")
 public interface VehicleMapper {
 
-    @Mapping(source = "status", target = "status")
     VehicleResponseDto toResponseDto(Vehicle vehicle);
 
     @Mapping(source = "status", target = "status")

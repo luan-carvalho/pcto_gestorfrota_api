@@ -10,6 +10,6 @@ public record VehicleCreationRequestDto(
         @NotBlank @Size(min = 7, max = 8) @Pattern(regexp = "^[A-Z]{3}-?(\\d{4}|\\d[A-Z0-9]\\d{2})$") String licensePlate,
         String type,
         Integer capacity,
-        Integer mileage) {
+        Integer currentMileage) {
 
 }

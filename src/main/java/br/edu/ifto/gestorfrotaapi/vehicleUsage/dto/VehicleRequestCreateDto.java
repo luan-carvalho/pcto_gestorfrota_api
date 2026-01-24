@@ -9,10 +9,10 @@ import jakarta.validation.constraints.NotNull;
 
 public record VehicleRequestCreateDto(
         @NotNull Long requestedVehicleId,
-        @NotBlank RequestPriority priority,
+        @NotNull RequestPriority priority,
         @NotNull LocalDateTime startDateTime,
         @NotNull LocalDateTime endDateTime,
-        @NotBlank VehicleRequestPurpose purpose,
+        @NotNull VehicleRequestPurpose purpose,
         @NotBlank String processNumber) {
 
 }

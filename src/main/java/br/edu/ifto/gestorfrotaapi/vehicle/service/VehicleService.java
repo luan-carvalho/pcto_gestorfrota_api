@@ -53,7 +53,7 @@ public class VehicleService {
                 request.licensePlate(),
                 type,
                 request.capacity(),
-                request.mileage(),
+                request.currentMileage(),
                 createdBy);
 
         return repository.save(newVehicle);

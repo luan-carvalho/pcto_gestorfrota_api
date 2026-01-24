@@ -63,7 +63,7 @@ public class AuthenticationController {
         User user = (User) auth.getPrincipal();
         var token = tokenService.generateToken(user.getUsername());
         return ResponseEntity
-                .ok(new LoginResponseDto(token, "Bearer", user.getFirstName(), user.getRole().name()));
+                .ok(new LoginResponseDto(token, "Bearer", user.getFirstName(), user.getRoles()));
     }
 
     @PatchMapping("/update-password")

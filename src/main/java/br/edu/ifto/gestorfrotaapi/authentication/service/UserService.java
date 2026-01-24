@@ -43,7 +43,7 @@ public class UserService {
     @PreAuthorize("hasAnyRole('ADMIN', 'FLEET_MANAGER')")
     public User create(UserCreateDto dto) {
 
-        User newUser = new User(dto.name(), dto.registration(), TokenGenerator.generateToken(), dto.role());
+        User newUser = new User(dto.name(), dto.registration(), TokenGenerator.generateToken(), dto.roles());
         return userRepo.save(newUser);
 
     }
@@ -52,7 +52,7 @@ public class UserService {
     public User update(Long userId, UserUpdateDto dto) {
 
         User existingUser = findById(userId);
-        existingUser.updateInfo(dto.name(), dto.registration(), dto.role());
+        existingUser.updateInfo(dto.name(), dto.registration(), dto.roles());
         return userRepo.save(existingUser);
 
     }

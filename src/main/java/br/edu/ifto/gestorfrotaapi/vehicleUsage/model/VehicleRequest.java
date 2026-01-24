@@ -42,7 +42,7 @@ public class VehicleRequest {
     @JoinColumn(name = "driver_id")
     private User driver;
 
-    @OneToMany(mappedBy = "vehicleRequest", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "request", cascade = CascadeType.ALL)
     private List<VehicleRequestHistory> history = new ArrayList<>();
 
     @OneToOne(mappedBy = "vehicleRequest", cascade = CascadeType.ALL)
@@ -82,7 +82,7 @@ public class VehicleRequest {
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.purpose = purpose;
-        this.status = RequestStatus.CREATED;
+        this.status = RequestStatus.SENT_TO_MANAGER;
 
         this.history.add(new VehicleRequestHistory(
                 this,
@@ -95,7 +95,7 @@ public class VehicleRequest {
 
     public void approve(User approvedBy, User driver, String notes) {
 
-        if (this.status != RequestStatus.CREATED) {
+        if (this.status != RequestStatus.SENT_TO_MANAGER) {
             throw new IllegalStateException(
                     "Request cannot be approved from status " + this.status);
         }

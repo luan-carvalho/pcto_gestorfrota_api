@@ -46,9 +46,11 @@ public class Vehicle {
             Integer currentMileage,
             User createdBy) {
 
+        this.model = model;
         this.make = make;
         this.licensePlate = licensePlate;
         this.type = type;
+        this.status = VehicleStatus.ACTIVE;
         this.capacity = capacity;
         this.mileageHistory = new ArrayList<>();
 
@@ -68,7 +70,7 @@ public class Vehicle {
 
     public void deactivate() {
 
-        this.status = VehicleStatus.DECOMISSIONED;
+        this.status = VehicleStatus.INACTIVE;
 
     }
 

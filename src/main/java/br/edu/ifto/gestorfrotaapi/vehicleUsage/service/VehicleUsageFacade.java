@@ -1,13 +1,14 @@
 package br.edu.ifto.gestorfrotaapi.vehicleUsage.service;
 
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification.createdBetween;
-import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification.hasDriverId;
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification.hasPriority;
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification.hasProcessNumber;
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification.hasPurpose;
-import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification.hasRequesterId;
+import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification.hasRequesterName;
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification.hasStatus;
-import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification.hasVehicleId;
+import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification.hasVehicleLicensePlate;
+import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification.hasVehicleMake;
+import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification.hasVehicleModel;
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification.usageBetween;
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleUsageSpecification.checkInBetween;
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleUsageSpecification.checkOutBetween;
@@ -35,6 +36,8 @@ import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.VehicleRequestCreateDto;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.VehicleRequestFilter;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.VehicleUsageFilter;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.exception.RequestConflictException;
+import br.edu.ifto.gestorfrotaapi.vehicleUsage.exception.VehicleRequestNotFoundException;
+import br.edu.ifto.gestorfrotaapi.vehicleUsage.exception.VehicleUsageNotFoundException;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.VehicleRequest;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.VehicleUsage;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.enums.RequestStatus;
@@ -62,10 +65,11 @@ public class VehicleUsageFacade {
         public VehicleRequest findById(Long requestId) {
 
                 return requestRepo.findById(requestId)
-                                .orElseThrow(() -> new IllegalArgumentException("Request not found with the given id"));
+                                .orElseThrow(() -> new VehicleRequestNotFoundException(requestId));
 
         }
 
+        @PreAuthorize("hasRole('REQUESTER')")
         @Transactional
         public VehicleRequest openVehicleRequest(VehicleRequestCreateDto dto, User requester) {
 
@@ -103,9 +107,10 @@ public class VehicleUsageFacade {
         public Page<VehicleRequest> searchForVehicleRequest(VehicleRequestFilter filter, Pageable pageable) {
 
                 Specification<VehicleRequest> spec = Specification
-                                .where(hasRequesterId(filter.requesterId()))
-                                .and(hasDriverId(filter.driverId()))
-                                .and(hasVehicleId(filter.vehicleId()))
+                                .where(hasRequesterName(filter.requesterName()))
+                                .and(hasVehicleLicensePlate(filter.vehicleLicensePlate()))
+                                .and(hasVehicleMake(filter.vehicleMake()))
+                                .and(hasVehicleModel(filter.vehicleModel()))
                                 .and(hasStatus(filter.status()))
                                 .and(hasPriority(filter.priority()))
                                 .and(hasPurpose(filter.purpose()))
@@ -118,10 +123,10 @@ public class VehicleUsageFacade {
         }
 
         @Transactional
-        @PreAuthorize("hasAnyRole('FLEET_MANAGER')")
-        public void approveRequest(VehicleRequestApprovalDto dto, User approver) {
+        @PreAuthorize("hasRole('FLEET_MANAGER')")
+        public void approveRequest(Long requestId, VehicleRequestApprovalDto dto, User approver) {
 
-                VehicleRequest request = findById(dto.requestId());
+                VehicleRequest request = findById(requestId);
 
                 User driver = userRepo.findById(dto.driverId()).orElseThrow(
                                 () -> new UserNotFoundException(dto.driverId()));
@@ -149,11 +154,12 @@ public class VehicleUsageFacade {
         }
 
         @Transactional
-        @PreAuthorize("hasAnyRole('DRIVER')")
-        public void checkIn(CheckInDto dto, User driver) {
+        @PreAuthorize("hasRole('DRIVER')")
+        public void checkIn(Long usageId, CheckInDto dto, User driver) {
 
-                VehicleUsage usage = usageRepo.findById(dto.vehicleUsageId())
-                                .orElseThrow(() -> new IllegalArgumentException("Vehicle Usage not found"));
+                VehicleUsage usage = usageRepo.findById(usageId)
+                                .orElseThrow(() -> new VehicleUsageNotFoundException(
+                                                usageId));
 
                 if (!usage.getDriver().equals(driver)) {
 
@@ -167,11 +173,12 @@ public class VehicleUsageFacade {
         }
 
         @Transactional
-        @PreAuthorize("hasAnyRole('DRIVER')")
-        public void checkOut(CheckOutDto dto, User driver) {
+        @PreAuthorize("hasRole('DRIVER')")
+        public void checkOut(Long usageId, CheckOutDto dto, User driver) {
 
-                VehicleUsage usage = usageRepo.findById(dto.vehicleUsageId())
-                                .orElseThrow(() -> new IllegalArgumentException("Vehicle Usage not found"));
+                VehicleUsage usage = usageRepo.findById(usageId)
+                                .orElseThrow(() -> new VehicleUsageNotFoundException(
+                                                usageId));
 
                 if (!usage.getDriver().equals(driver)) {
 
@@ -181,6 +188,22 @@ public class VehicleUsageFacade {
 
                 usage.checkOut(dto.endMileage(), dto.notes());
                 usageRepo.save(usage);
+
+        }
+
+        public void rejectRequest(Long requestId, String notes, User rejector) {
+
+                VehicleRequest request = findById(requestId);
+                request.reject(rejector, notes);
+                requestRepo.save(request);
+
+        }
+
+        public void cancelRequest(Long requestId, String notes, User canceledBy) {
+
+                VehicleRequest request = findById(requestId);
+                request.cancel(canceledBy, notes);
+                requestRepo.save(request);
 
         }
 }

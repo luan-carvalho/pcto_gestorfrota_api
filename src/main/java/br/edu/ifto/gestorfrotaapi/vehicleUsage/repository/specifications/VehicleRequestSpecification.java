@@ -11,16 +11,21 @@ import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.enums.VehicleRequestPurpose
 
 public class VehicleRequestSpecification {
 
-    public static Specification<VehicleRequest> hasRequesterId(Long requesterId) {
-        return (root, query, cb) -> requesterId == null ? null : cb.equal(root.get("requester").get("id"), requesterId);
+    public static Specification<VehicleRequest> hasRequesterName(String requesterName) {
+        return (root, query, cb) -> requesterName == null ? null
+                : cb.equal(root.get("requester").get("name"), requesterName);
     }
 
-    public static Specification<VehicleRequest> hasDriverId(Long driverId) {
-        return (root, query, cb) -> driverId == null ? null : cb.equal(root.get("driver").get("id"), driverId);
+    public static Specification<VehicleRequest> hasVehicleLicensePlate(String licensePlate) {
+        return (root, query, cb) -> licensePlate == null ? null : cb.equal(root.get("vehicle").get("licensePlate"), licensePlate);
     }
 
-    public static Specification<VehicleRequest> hasVehicleId(Long vehicleId) {
-        return (root, query, cb) -> vehicleId == null ? null : cb.equal(root.get("vehicle").get("id"), vehicleId);
+    public static Specification<VehicleRequest> hasVehicleMake(String make) {
+        return (root, query, cb) -> make == null ? null : cb.equal(root.get("vehicle").get("make"), make);
+    }
+
+    public static Specification<VehicleRequest> hasVehicleModel(String model) {
+        return (root, query, cb) -> model == null ? null : cb.equal(root.get("vehicle").get("model"), model);
     }
 
     public static Specification<VehicleRequest> hasStatus(RequestStatus status) {

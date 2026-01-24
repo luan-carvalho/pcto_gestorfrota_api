@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import br.edu.ifto.gestorfrotaapi.authentication.model.User;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.enums.MileageEntrySource;
+import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
+@Entity
 public class VehicleMileageEntry {
 
     @Id
