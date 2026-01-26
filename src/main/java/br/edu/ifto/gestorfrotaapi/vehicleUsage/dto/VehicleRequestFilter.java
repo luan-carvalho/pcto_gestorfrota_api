@@ -11,7 +11,6 @@ public record VehicleRequestFilter(
                 Long requestId,
 
                 String requesterName,
-                String vehicleLicensePlate,
                 String vehicleDescription,
                 
                 RequestStatus status,

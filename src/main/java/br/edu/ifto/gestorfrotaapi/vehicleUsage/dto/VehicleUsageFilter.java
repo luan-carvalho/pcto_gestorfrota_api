@@ -18,8 +18,5 @@ public record VehicleUsageFilter(
                 LocalDateTime checkOutFrom,
                 LocalDateTime checkOutTo,
 
-                Integer mileageStartMin,
-                Integer mileageEndMax,
-
                 VehicleUsageStatus status) {
 }

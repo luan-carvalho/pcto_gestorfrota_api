@@ -116,7 +116,6 @@ public class VehicleUsageFacade {
                 Specification<VehicleRequest> spec = Specification
                                 .where(hasRequesterName(filter.requesterName()))
                                 .and(hasRequestId(filter.requestId()))
-                                .and(hasVehicleLicensePlate(filter.vehicleLicensePlate()))
                                 .and(hasVehicleDescription(filter.vehicleDescription()))
                                 .and(hasStatus(filter.status()))
                                 .and(hasPriority(filter.priority()))

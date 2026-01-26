@@ -13,8 +13,6 @@ public record UserVehicleUsageFilter(
 
         VehicleUsageStatus status,
 
-        String processNumber,
-
         LocalDateTime usageFrom,
         LocalDateTime usageTo) {
 
