@@ -8,7 +8,6 @@ import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification.hasRequesterName;
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification.hasStatus;
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification.hasVehicleDescription;
-import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification.hasVehicleLicensePlate;
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification.usageBetween;
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleUsageSpecification.checkInBetween;
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleUsageSpecification.checkOutBetween;
@@ -137,7 +136,7 @@ public class VehicleUsageFacade {
                 User driver = userRepo.findById(dto.driverId()).orElseThrow(
                                 () -> new UserNotFoundException(dto.driverId()));
 
-                boolean hasDriverConflict;
+                // boolean hasDriverConflict;
 
                 request.approve(approver, driver, dto.notes());
                 requestRepo.save(request);
