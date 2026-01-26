@@ -138,7 +138,7 @@ public class VehicleUsageFacade {
                 User driver = userRepo.findById(dto.driverId()).orElseThrow(
                                 () -> new UserNotFoundException(dto.driverId()));
 
-                boolean hasDriverConflict; //implementar validação de motorista
+                boolean hasDriverConflict;
 
                 request.approve(approver, driver, dto.notes());
                 requestRepo.save(request);
