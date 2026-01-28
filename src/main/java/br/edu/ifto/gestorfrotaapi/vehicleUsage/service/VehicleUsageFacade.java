@@ -36,12 +36,14 @@ import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.VehicleRequestApprovalDto;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.VehicleRequestCreateDto;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.VehicleRequestFilter;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.VehicleUsageFilter;
+import br.edu.ifto.gestorfrotaapi.vehicleUsage.exception.DriverNotAvaliableException;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.exception.RequestConflictException;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.exception.VehicleRequestNotFoundException;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.exception.VehicleUsageNotFoundException;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.VehicleRequest;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.VehicleUsage;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.enums.RequestStatus;
+import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.enums.VehicleUsageStatus;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.VehicleRequestRepository;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.VehicleUsageRepository;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification;
@@ -136,7 +138,17 @@ public class VehicleUsageFacade {
                 User driver = userRepo.findById(dto.driverId()).orElseThrow(
                                 () -> new UserNotFoundException(dto.driverId()));
 
-                // boolean hasDriverConflict;
+                boolean hasDriverConflict = usageRepo.existsConflict(
+                                request.getStartDateTime(),
+                                request.getEndDateTime(),
+                                dto.driverId(),
+                                List.of(VehicleUsageStatus.NOT_STARTED, VehicleUsageStatus.STARTED));
+
+                if (hasDriverConflict) {
+
+                        throw new DriverNotAvaliableException(driver);
+
+                }
 
                 request.approve(approver, driver, dto.notes());
                 requestRepo.save(request);

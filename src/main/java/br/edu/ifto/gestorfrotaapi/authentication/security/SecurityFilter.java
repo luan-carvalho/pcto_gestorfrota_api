@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import br.edu.ifto.gestorfrotaapi.authentication.exception.UserNotFoundException;
+import br.edu.ifto.gestorfrotaapi.authentication.model.enums.UserStatus;
 import br.edu.ifto.gestorfrotaapi.authentication.repository.UserRepository;
 import br.edu.ifto.gestorfrotaapi.authentication.service.TokenService;
 import jakarta.servlet.FilterChain;
@@ -37,7 +38,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 
             var registration = tokenService.validateToken(token);
 
-            UserDetails user = userRepository.findByRegistration(registration)
+            UserDetails user = userRepository.findByRegistrationAndStatus(registration, UserStatus.ACTIVE)
                     .orElseThrow(() -> new UserNotFoundException(registration));
 
             var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
