@@ -1,11 +1,9 @@
 package br.edu.ifto.gestorfrotaapi.authentication.controller;
 
-import java.util.Map;
-
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,8 +16,7 @@ import br.edu.ifto.gestorfrotaapi.authentication.dto.LoginResponseDto;
 import br.edu.ifto.gestorfrotaapi.authentication.dto.UpdatePasswordDto;
 import br.edu.ifto.gestorfrotaapi.authentication.dto.VerifyFirstAccessDto;
 import br.edu.ifto.gestorfrotaapi.authentication.model.User;
-import br.edu.ifto.gestorfrotaapi.authentication.service.TokenService;
-import br.edu.ifto.gestorfrotaapi.authentication.service.UserService;
+import br.edu.ifto.gestorfrotaapi.authentication.service.AuthenticationService;
 import jakarta.validation.Valid;
 
 @RestController
@@ -27,51 +24,49 @@ import jakarta.validation.Valid;
 public class AuthenticationController {
 
     private final AuthenticationManager authManager;
-    private final UserService userService;
-    private final TokenService tokenService;
+    private final AuthenticationService authService;
 
-    public AuthenticationController(AuthenticationManager authManager, UserService userService,
-            TokenService tokenService) {
+    public AuthenticationController(AuthenticationManager authManager, AuthenticationService authService) {
         this.authManager = authManager;
-        this.userService = userService;
-        this.tokenService = tokenService;
+        this.authService = authService;
     }
 
     @PostMapping("/first-access/verify")
     public ResponseEntity<Void> verifyUserFirstAccess(@RequestBody @Valid VerifyFirstAccessDto dto) {
 
-        boolean isValid = userService.verifyFirstAccess(dto.registration(), dto.token());
+        authService.verifyFirstAccess(dto.registration(), dto.token());
+        return ResponseEntity.noContent().build();
 
-        if (isValid) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.badRequest().build();
-        }
     }
 
     @PatchMapping("/first-access/activate")
-    public ResponseEntity<Map<String, String>> activateUserFirstAccess(@RequestBody @Valid ActivateFirstAccessDto dto) {
+    public ResponseEntity<Void> activateUserFirstAccess(@RequestBody @Valid ActivateFirstAccessDto dto) {
 
-        userService.activateFirstAccess(dto.registration(), dto.token(), dto.password());
-        return ResponseEntity.ok(Map.of("message", "Account activated successfully. You can login now!"));
+        authService.activateFirstAccess(dto.registration(), dto.token(), dto.password());
+        return ResponseEntity.ok().build();
     }
 
-    @PostMapping("login")
+    @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody @Valid LoginDto data) {
+
         var authToken = new UsernamePasswordAuthenticationToken(data.registration(), data.password());
         var auth = authManager.authenticate(authToken);
         User user = (User) auth.getPrincipal();
-        var token = tokenService.generateToken(user.getUsername());
+        var token = authService.generateToken(user.getUsername());
+
         return ResponseEntity
                 .ok(new LoginResponseDto(token, "Bearer", user.getFirstName(), user.getRoles()));
+
     }
 
     @PatchMapping("/update-password")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> updatePassword(
-            @RequestBody @Valid UpdatePasswordDto dto,
-            @AuthenticationPrincipal User user) {
-        userService.updatePassword(dto, user);
+            @RequestBody @Valid UpdatePasswordDto dto) {
+
+        authService.updateOwnPassword(dto.currentPassword(), dto.newPassword());
         return ResponseEntity.noContent().build();
+
     }
 
 }

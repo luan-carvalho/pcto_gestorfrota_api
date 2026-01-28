@@ -39,12 +39,24 @@ public class Vehicle {
     @OneToMany(mappedBy = "vehicle")
     private List<VehicleMileageEntry> mileageHistory;
 
-    public Vehicle() {
+    protected Vehicle() {
+
     }
 
-    public Vehicle(String model, String make, String licensePlate, VehicleType type, Integer capacity,
+    private Vehicle(String model, String make, String licensePlate, VehicleType type, Integer capacity,
             Integer currentMileage,
             User createdBy) {
+
+        Objects.requireNonNull(model);
+        Objects.requireNonNull(make);
+        Objects.requireNonNull(licensePlate);
+        Objects.requireNonNull(createdBy);
+
+        if (capacity <= 0) {
+
+            throw new IllegalArgumentException("Capacity must be positive");
+
+        }
 
         this.model = model;
         this.make = make;
@@ -62,9 +74,19 @@ public class Vehicle {
 
     }
 
-    public void updateStatus(VehicleStatus status) {
+    public static Vehicle create(String model, String make, String licensePlate, VehicleType type, Integer capacity,
+            Integer currentMileage,
+            User createdBy) {
 
-        this.status = status;
+        return new Vehicle(model, make, licensePlate, type, capacity,
+                currentMileage,
+                createdBy);
+
+    }
+
+    public void activate() {
+
+        this.status = VehicleStatus.ACTIVE;
 
     }
 

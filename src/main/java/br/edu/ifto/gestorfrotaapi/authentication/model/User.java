@@ -1,7 +1,9 @@
 package br.edu.ifto.gestorfrotaapi.authentication.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -47,15 +49,26 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "role")
-    private List<Role> roles;
+    private List<Role> roles = new ArrayList<>();
 
     private String firstAccessToken;
 
-    public User() {
+    protected User() {
 
     }
 
-    public User(String name, String registration, String firstAccessToken, List<Role> roles) {
+    private User(String name, String registration, String firstAccessToken, List<Role> roles) {
+
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(registration);
+        Objects.requireNonNull(roles);
+        Objects.requireNonNull(firstAccessToken);
+
+        if (roles.isEmpty()) {
+
+            throw new IllegalArgumentException("User must have at least one role");
+
+        }
 
         this.name = name;
         this.registration = registration;
@@ -65,15 +78,15 @@ public class User implements UserDetails {
 
     }
 
-    public boolean isActive() {
+    public static User create(String name, String registration, String firstAccessToken, List<Role> roles) {
 
-        return status == UserStatus.ACTIVE;
+        return new User(name, registration, firstAccessToken, roles);
 
     }
 
-    public boolean isInactive() {
+    public boolean isActive() {
 
-        return status == UserStatus.INACTIVE;
+        return status == UserStatus.ACTIVE;
 
     }
 
@@ -112,6 +125,12 @@ public class User implements UserDetails {
     }
 
     public void updateInfo(String name, String registration, List<Role> roles) {
+
+        if (!isActive()) {
+
+            throw new StatusUpdateException("Cannot change the data of an inactive user");
+
+        }
 
         if (name != null && !name.isBlank())
             this.name = name;

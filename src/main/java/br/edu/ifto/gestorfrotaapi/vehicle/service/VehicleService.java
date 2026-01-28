@@ -3,93 +3,82 @@ package br.edu.ifto.gestorfrotaapi.vehicle.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import br.edu.ifto.gestorfrotaapi.authentication.exception.UserNotFoundException;
 import br.edu.ifto.gestorfrotaapi.authentication.model.User;
-import br.edu.ifto.gestorfrotaapi.authentication.repository.UserRepository;
-import br.edu.ifto.gestorfrotaapi.vehicle.dto.VehicleCreationRequestDto;
-import br.edu.ifto.gestorfrotaapi.vehicle.dto.VehicleUpdateRequestDto;
+import br.edu.ifto.gestorfrotaapi.authentication.util.SecurityUtils;
+import br.edu.ifto.gestorfrotaapi.vehicle.command.CreateVehicleCommand;
+import br.edu.ifto.gestorfrotaapi.vehicle.command.UpdateVehicleCommand;
 import br.edu.ifto.gestorfrotaapi.vehicle.exception.VehicleNotFoundException;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.Vehicle;
-import br.edu.ifto.gestorfrotaapi.vehicle.model.enums.VehicleType;
 import br.edu.ifto.gestorfrotaapi.vehicle.repository.VehicleRepository;
 
 @Service
+@Transactional
 public class VehicleService {
 
     private final VehicleRepository repository;
-    private final UserRepository userRepo;
 
-    public VehicleService(VehicleRepository repository, UserRepository userRepo) {
+    public VehicleService(VehicleRepository repository) {
         this.repository = repository;
-        this.userRepo = userRepo;
     }
 
-    public List<Vehicle> listAllVehicles() {
+    @Transactional(readOnly = true)
+    public List<Vehicle> findAll() {
 
         return repository.findAll();
 
     }
 
-    public Vehicle getVehicleById(Long id) {
+    @Transactional(readOnly = true)
+    public Vehicle findById(Long id) {
 
         return repository.findById(id).orElseThrow(() -> new VehicleNotFoundException(id));
 
     }
 
-    public Vehicle createNewVehicle(VehicleCreationRequestDto request, String userRegistration) {
+    public Vehicle create(CreateVehicleCommand cmd) {
 
-        VehicleType type = null;
+        User createdBy = SecurityUtils.currentUser();
 
-        User createdBy = userRepo.findByRegistration(userRegistration)
-                .orElseThrow(() -> new UserNotFoundException(userRegistration));
-
-        if (request.type() != null)
-            type = VehicleType.valueOf(request.type());
-
-        Vehicle newVehicle = new Vehicle(
-                request.model(),
-                request.make(),
-                request.licensePlate(),
-                type,
-                request.capacity(),
-                request.currentMileage(),
-                createdBy);
-
-        return repository.save(newVehicle);
+        return repository.save(Vehicle.create(cmd.model(), cmd.make(), cmd.licensePlate(), cmd.type(), cmd.capacity(),
+                cmd.currentMileage(), createdBy));
 
     }
 
-    public Vehicle updateVehicleInfo(Long id, VehicleUpdateRequestDto request) {
+    public Vehicle update(Long id, UpdateVehicleCommand cmd) {
 
-        VehicleType type = null;
+        Vehicle toBeUpdated = findById(id);
 
-        if (request.type() != null)
-            type = VehicleType.valueOf(request.type());
-
-        Vehicle toBeUpdated = getVehicleById(id);
         toBeUpdated.updateInfo(
-                request.licensePlate(),
-                request.make(),
-                request.model(),
-                type,
-                request.capacity());
-        return repository.save(toBeUpdated);
+                cmd.licensePlate(),
+                cmd.make(),
+                cmd.model(),
+                cmd.type(),
+                cmd.capacity());
+
+        return toBeUpdated;
 
     }
 
-    public void deleteById(Long id) {
+    public void delete(Long id) {
 
-        Vehicle toBeDeleted = getVehicleById(id);
-        repository.delete(toBeDeleted);
+        Vehicle v = findById(id);
+        repository.delete(v);
 
     }
 
     public void deactivate(Long id) {
 
-        Vehicle v = repository.findById(id).orElseThrow(() -> new VehicleNotFoundException(id));
+        Vehicle v = findById(id);
         v.deactivate();
-        repository.save(v);
+
+    }
+
+    public void activate(Long id) {
+
+        Vehicle v = findById(id);
+        v.activate();
 
     }
 

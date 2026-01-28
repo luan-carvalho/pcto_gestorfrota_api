@@ -1,10 +1,9 @@
 package br.edu.ifto.gestorfrotaapi.authentication.controller;
 
+import java.net.URI;
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -13,12 +12,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import br.edu.ifto.gestorfrotaapi.authentication.dto.UserCreateDto;
+import br.edu.ifto.gestorfrotaapi.authentication.command.UserCreateCommand;
+import br.edu.ifto.gestorfrotaapi.authentication.command.UserUpdateCommand;
+import br.edu.ifto.gestorfrotaapi.authentication.dto.UserCreateRequestDto;
 import br.edu.ifto.gestorfrotaapi.authentication.dto.UserCreateResponseDto;
 import br.edu.ifto.gestorfrotaapi.authentication.dto.UserResponseDto;
-import br.edu.ifto.gestorfrotaapi.authentication.dto.UserUpdateDto;
+import br.edu.ifto.gestorfrotaapi.authentication.dto.UserUpdateRequestDto;
 import br.edu.ifto.gestorfrotaapi.authentication.mapper.UserMapper;
+import br.edu.ifto.gestorfrotaapi.authentication.model.User;
 import br.edu.ifto.gestorfrotaapi.authentication.service.UserService;
 import jakarta.validation.Valid;
 
@@ -35,48 +38,59 @@ public class UserController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserCreateResponseDto> create(@RequestBody @Valid UserCreateDto dto) {
-        UserCreateResponseDto response = userMapper
-                .toCreateResponseDto(userService.create(dto));
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    public ResponseEntity<UserCreateResponseDto> create(@RequestBody @Valid UserCreateRequestDto dto) {
+
+        User created = userService.create(new UserCreateCommand(
+                dto.registration(),
+                dto.name(),
+                dto.roles()));
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}").buildAndExpand(created.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).body(userMapper.toCreateResponseDto(created));
+
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserResponseDto>> findAll() {
         return ResponseEntity.ok(userMapper.toResponseDto(userService.findAll()));
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserResponseDto> findById(@PathVariable Long id) {
         return ResponseEntity.ok(userMapper.toResponseDto(userService.findById(id)));
     }
 
     @PatchMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserResponseDto> update(@PathVariable Long id, @RequestBody @Valid UserUpdateDto dto) {
+    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody @Valid UserUpdateRequestDto dto) {
+
+        userService.update(
+                id,
+                new UserUpdateCommand(
+                        dto.name(),
+                        dto.registration(),
+                        dto.roles()));
+
         return ResponseEntity
-                .ok(userMapper.toResponseDto(userService.update(id, dto)));
+                .noContent().build();
     }
 
     @PatchMapping("/{userId}/deactivate")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deactivateUser(@PathVariable Long userId) {
-        userService.deactivateUser(userId);
+        userService.deactivate(userId);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{userId}/activate")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> activateUser(@PathVariable Long userId) {
-        userService.activateUser(userId);
+        userService.activate(userId);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
 
         userService.delete(id);

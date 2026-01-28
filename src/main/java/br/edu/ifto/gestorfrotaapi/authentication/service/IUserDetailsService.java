@@ -25,7 +25,7 @@ public class IUserDetailsService implements UserDetailsService {
         User user = repository.findByRegistrationAndStatus(registration, UserStatus.ACTIVE)
                 .orElseThrow(() -> new UserNotFoundException(registration));
 
-        if (user.isInactive()) {
+        if (!user.isActive()) {
 
             throw new DisabledException("This user doesn't have access to the system!");
 

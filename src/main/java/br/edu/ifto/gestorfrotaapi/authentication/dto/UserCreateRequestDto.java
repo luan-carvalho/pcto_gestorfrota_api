@@ -6,7 +6,7 @@ import br.edu.ifto.gestorfrotaapi.authentication.model.enums.Role;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record UserCreateDto(
+public record UserCreateRequestDto(
         @NotBlank String registration,
         @NotBlank String name,
         @NotNull List<Role> roles
