@@ -41,28 +41,22 @@ public class AdminUserInitializer {
     public void createAdminUserIfMissing() {
 
         if (!enabled) {
-            System.out.println("DESATIVADO");
             return;
         }
-        
+
         if (adminPassword.isBlank()) {
-            System.out.println("SENHA EM BRANCO");
             return;
         }
-        
+
         if (adminName.isBlank()) {
-            System.out.println("NOME EM BRANCO");
             return;
         }
-        
+
         if (userRepository.existsByRegistration(adminRegistration)) {
-            
-            System.out.println("JÁ TEM UM COM ESSA MATRÍCULA");
+
             return;
 
         }
-
-        System.out.println("PASSOU NOS TESTES");
 
         String encodedPassword = passwordEncoder.encode(adminPassword);
 
