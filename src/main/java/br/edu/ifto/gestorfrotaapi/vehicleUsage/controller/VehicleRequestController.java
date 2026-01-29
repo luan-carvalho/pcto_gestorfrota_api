@@ -5,7 +5,6 @@ import java.net.URI;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,13 +19,13 @@ import br.edu.ifto.gestorfrotaapi.authentication.service.UserService;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.Vehicle;
 import br.edu.ifto.gestorfrotaapi.vehicle.service.VehicleService;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.command.OpenVehicleRequestCommand;
-import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.UserVehicleRequestFilter;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.VehicleRequestApprovalDto;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.VehicleRequestCreateRequestDto;
-import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.VehicleRequestFilter;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.VehicleRequestResponseDto;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.mapper.VehicleUsageMapper;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.VehicleRequest;
+import br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.filters.UserVehicleRequestFilter;
+import br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.filters.VehicleRequestFilter;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.service.VehicleRequestService;
 import jakarta.validation.Valid;
 
@@ -55,10 +54,9 @@ public class VehicleRequestController {
     }
 
     @GetMapping("/my-requests")
-    public Page<VehicleRequestResponseDto> getUserRequests(@AuthenticationPrincipal User user,
-            UserVehicleRequestFilter filter, Pageable pageable) {
+    public Page<VehicleRequestResponseDto> getUserRequests(UserVehicleRequestFilter filter, Pageable pageable) {
 
-        return service.getUserRequests(filter, user, pageable).map(mapper::toRequestResponseDto);
+        return service.getUserRequests(filter, pageable).map(mapper::toRequestResponseDto);
 
     }
 

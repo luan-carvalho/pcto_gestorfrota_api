@@ -24,14 +24,14 @@ import br.edu.ifto.gestorfrotaapi.authentication.model.User;
 import br.edu.ifto.gestorfrotaapi.authentication.util.SecurityUtils;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.Vehicle;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.command.OpenVehicleRequestCommand;
-import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.UserVehicleRequestFilter;
-import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.VehicleRequestFilter;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.exception.RequestConflictException;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.exception.VehicleInactiveException;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.exception.VehicleRequestNotFoundException;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.VehicleRequest;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.enums.RequestStatus;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.VehicleRequestRepository;
+import br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.filters.UserVehicleRequestFilter;
+import br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.filters.VehicleRequestFilter;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleRequestSpecification;
 
 @Service
@@ -124,11 +124,14 @@ public class VehicleRequestService {
     }
 
     @Transactional(readOnly = true)
-    public Page<VehicleRequest> getUserRequests(UserVehicleRequestFilter filter, User user, Pageable pageable) {
+    @PreAuthorize("hasRole('REQUESTER')")
+    public Page<VehicleRequest> getUserRequests(UserVehicleRequestFilter filter, Pageable pageable) {
+
+        User loggedUser = SecurityUtils.currentUser();
 
         Specification<VehicleRequest> spec = Specification
                 .where(hasRequestId(filter.requestId()))
-                .and(VehicleRequestSpecification.hasRequesterId(user.getId()))
+                .and(VehicleRequestSpecification.hasRequesterId(loggedUser.getId()))
                 .and(hasVehicleDescription(filter.vehicleDescription()))
                 .and(hasStatus(filter.status()))
                 .and(hasPriority(filter.priority()))

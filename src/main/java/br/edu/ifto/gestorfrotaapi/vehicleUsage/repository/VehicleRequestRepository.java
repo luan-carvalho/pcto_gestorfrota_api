@@ -6,6 +6,7 @@ import java.util.Collection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -31,6 +32,7 @@ public interface VehicleRequestRepository
                         @Param("vehicleId") Long vehicleId,
                         @Param("activeStatuses") Collection<RequestStatus> activeStatuses);
 
+        @EntityGraph(attributePaths = "vehicle")
         Page<VehicleRequest> findAll(Specification<VehicleRequest> spec, Pageable page);
 
 }

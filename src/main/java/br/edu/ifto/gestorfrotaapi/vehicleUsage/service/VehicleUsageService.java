@@ -23,14 +23,14 @@ import org.springframework.transaction.annotation.Transactional;
 import br.edu.ifto.gestorfrotaapi.authentication.model.User;
 import br.edu.ifto.gestorfrotaapi.authentication.util.SecurityUtils;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.command.OpenVehicleUsageCommand;
-import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.UserVehicleUsageFilter;
-import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.VehicleUsageFilter;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.exception.DriverNotAvaliableException;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.exception.NotAssignedDriverException;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.exception.VehicleUsageNotFoundException;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.VehicleUsage;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.enums.VehicleUsageStatus;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.VehicleUsageRepository;
+import br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.filters.UserVehicleUsageFilter;
+import br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.filters.VehicleUsageFilter;
 
 @Service
 @Transactional
@@ -128,10 +128,12 @@ public class VehicleUsageService {
 
     @PreAuthorize("hasRole('DRIVER')")
     @Transactional(readOnly = true)
-    public Page<VehicleUsage> getDriverUsages(UserVehicleUsageFilter filter, User user, Pageable pageable) {
+    public Page<VehicleUsage> getDriverUsages(UserVehicleUsageFilter filter, Pageable pageable) {
+
+        User loggedDriver = SecurityUtils.currentUser();
 
         Specification<VehicleUsage> spec = Specification
-                .where(hasDriverId(user.getId()))
+                .where(hasDriverId(loggedDriver.getId()))
                 .and(hasRequesterName(filter.requesterName()))
                 .and(hasVehicleRequestId(filter.requestId()))
                 .and(hasVehicleDescription(filter.vehicleDescription()))
