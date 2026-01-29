@@ -61,7 +61,7 @@ public class VehicleRequest {
     private LocalDateTime endDateTime;
     private VehicleRequestPurpose purpose;
 
-    public VehicleRequest() {
+    protected VehicleRequest() {
 
     }
 
@@ -70,7 +70,7 @@ public class VehicleRequest {
         this.createdAt = LocalDateTime.now();
     }
 
-    public VehicleRequest(User requester, Vehicle vehicle, RequestPriority priority, String processNumber,
+    private VehicleRequest(User requester, Vehicle vehicle, RequestPriority priority, String processNumber,
             LocalDateTime startDateTime, LocalDateTime endDateTime, VehicleRequestPurpose purpose) {
 
         if (startDateTime.isAfter(endDateTime))
@@ -91,6 +91,13 @@ public class VehicleRequest {
                 RequestAction.CREATED,
                 this.createdAt,
                 "Request created"));
+
+    }
+
+    public static VehicleRequest create(User requester, Vehicle vehicle, RequestPriority priority, String processNumber,
+            LocalDateTime startDateTime, LocalDateTime endDateTime, VehicleRequestPurpose purpose) {
+
+        return new VehicleRequest(requester, vehicle, priority, processNumber, startDateTime, endDateTime, purpose);
 
     }
 

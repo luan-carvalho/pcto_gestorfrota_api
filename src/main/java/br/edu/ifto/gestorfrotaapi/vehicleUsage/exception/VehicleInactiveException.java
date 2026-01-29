@@ -2,13 +2,13 @@ package br.edu.ifto.gestorfrotaapi.vehicleUsage.exception;
 
 import br.edu.ifto.gestorfrotaapi.vehicle.model.Vehicle;
 
-public class VehicleNotAvaliableException extends RuntimeException {
+public class VehicleInactiveException extends RuntimeException {
 
     private Vehicle vehicle;
 
-    public VehicleNotAvaliableException(Vehicle v) {
+    public VehicleInactiveException(Vehicle v) {
 
-        super("Vehicle " + v.toString() + "not avaliable. Current status: " + v.getStatus());
+        super("Vehicle " + v.toString() + " is not active");
 
     }
 

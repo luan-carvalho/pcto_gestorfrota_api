@@ -7,7 +7,7 @@ import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.enums.VehicleRequestPurpose
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record VehicleRequestCreateDto(
+public record VehicleRequestCreateRequestDto(
         @NotNull Long requestedVehicleId,
         @NotNull RequestPriority priority,
         @NotNull LocalDateTime startDateTime,

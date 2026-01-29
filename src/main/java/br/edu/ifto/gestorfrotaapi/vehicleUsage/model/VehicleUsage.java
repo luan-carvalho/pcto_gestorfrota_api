@@ -36,13 +36,17 @@ public class VehicleUsage {
     private Integer mileageStart;
     private Integer mileageEnd;
 
-    public VehicleUsage() {
+    protected VehicleUsage() {
     }
 
-    public VehicleUsage(VehicleRequest vehicleRequest, User driver) {
+    private VehicleUsage(VehicleRequest vehicleRequest, User driver) {
         this.vehicleRequest = vehicleRequest;
         this.driver = driver;
         this.status = VehicleUsageStatus.NOT_STARTED;
+    }
+
+    public static VehicleUsage create(VehicleRequest vehicleRequest, User driver) {
+        return new VehicleUsage(vehicleRequest, driver);
     }
 
     public void checkIn(Integer mileageStart) {
@@ -62,32 +66,32 @@ public class VehicleUsage {
         this.mileageStart = mileageStart;
         this.checkInAt = LocalDateTime.now();
         this.status = VehicleUsageStatus.STARTED;
-        
+
     }
-    
+
     public void checkOut(Integer mileageEnd, String notes) {
-        
+
         if (this.checkInAt == null) {
             throw new IllegalStateException("Cannot check out before check in");
         }
-        
+
         if (this.checkOutAt != null) {
             throw new IllegalStateException("Vehicle already checked out");
         }
-        
+
         if (mileageEnd < mileageStart) {
             throw new IllegalArgumentException(
-                "Mileage end cannot be lower than mileage start");
-            }
-            
-            this.mileageEnd = mileageEnd;
+                    "Mileage end cannot be lower than mileage start");
+        }
+
+        this.mileageEnd = mileageEnd;
         this.checkOutAt = LocalDateTime.now();
         this.vehicleRequest.getVehicle().updateMileage(
-            mileageEnd,
-            MileageEntrySource.USAGE_CHECKOUT,
-            driver,
-            notes != null ? notes : "Checkout from  Vehicle Request #" + vehicleRequest.getId());
-            this.status = VehicleUsageStatus.FINISHED;
+                mileageEnd,
+                MileageEntrySource.USAGE_CHECKOUT,
+                driver,
+                notes != null ? notes : "Checkout from  Vehicle Request #" + vehicleRequest.getId());
+        this.status = VehicleUsageStatus.FINISHED;
 
     }
 

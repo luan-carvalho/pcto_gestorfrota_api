@@ -19,18 +19,18 @@ import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.UserVehicleUsageFilter;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.VehicleUsageFilter;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.VehicleUsageResponseDto;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.mapper.VehicleUsageMapper;
-import br.edu.ifto.gestorfrotaapi.vehicleUsage.service.VehicleUsageFacade;
+import br.edu.ifto.gestorfrotaapi.vehicleUsage.service.VehicleUsageService;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("usage")
 public class VehicleUsageController {
 
-    private final VehicleUsageFacade facade;
+    private final VehicleUsageService service;
     private final VehicleUsageMapper mapper;
 
-    public VehicleUsageController(VehicleUsageFacade facade, VehicleUsageMapper mapper) {
-        this.facade = facade;
+    public VehicleUsageController(VehicleUsageService service, VehicleUsageMapper mapper) {
+        this.service = service;
         this.mapper = mapper;
     }
 
@@ -38,7 +38,7 @@ public class VehicleUsageController {
     @GetMapping
     public Page<VehicleUsageResponseDto> getUsages(VehicleUsageFilter filter, Pageable pageable) {
 
-        return facade.searchForVehicleUsage(filter, pageable).map(mapper::toUsageResponseDto);
+        return service.searchForVehicleUsage(filter, pageable).map(mapper::toUsageResponseDto);
 
     }
 
@@ -47,25 +47,23 @@ public class VehicleUsageController {
     public Page<VehicleUsageResponseDto> getDriverUsages(UserVehicleUsageFilter filter, Pageable pageable,
             @AuthenticationPrincipal User user) {
 
-        return facade.getDriverUsages(filter, user, pageable).map(mapper::toUsageResponseDto);
+        return service.getDriverUsages(filter, user, pageable).map(mapper::toUsageResponseDto);
 
     }
 
     @PatchMapping("/{usageId}/check-in")
-    public ResponseEntity<Void> checkIn(@PathVariable Long usageId, @RequestBody @Valid CheckInDto dto,
-            @AuthenticationPrincipal User user) {
+    public ResponseEntity<Void> checkIn(@PathVariable Long usageId, @RequestBody @Valid CheckInDto dto) {
 
         System.out.println(dto.currentMileage());
 
-        facade.checkIn(usageId, dto, user);
+        service.checkIn(usageId, dto.currentMileage());
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/{usageId}/check-out")
-    public ResponseEntity<Void> checkOut(@PathVariable Long usageId, @RequestBody @Valid CheckOutDto dto,
-            @AuthenticationPrincipal User user) {
+    public ResponseEntity<Void> checkOut(@PathVariable Long usageId, @RequestBody @Valid CheckOutDto dto) {
 
-        facade.checkOut(usageId, dto, user);
+        service.checkOut(usageId, dto.endMileage(), dto.notes());
         return ResponseEntity.ok().build();
 
     }
