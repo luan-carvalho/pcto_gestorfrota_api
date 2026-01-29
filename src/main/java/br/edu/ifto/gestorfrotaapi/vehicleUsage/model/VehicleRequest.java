@@ -59,6 +59,8 @@ public class VehicleRequest {
     private LocalDateTime createdAt;
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
+
+    @Enumerated(EnumType.STRING)
     private VehicleRequestPurpose purpose;
 
     protected VehicleRequest() {

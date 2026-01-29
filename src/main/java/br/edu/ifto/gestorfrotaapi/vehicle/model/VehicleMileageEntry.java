@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import br.edu.ifto.gestorfrotaapi.authentication.model.User;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.enums.MileageEntrySource;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,6 +34,7 @@ public class VehicleMileageEntry {
 
     private String obs;
 
+    @Enumerated(EnumType.STRING)
     private MileageEntrySource source;
 
     public VehicleMileageEntry(Vehicle vehicle, Integer mileage, User recordedBy, LocalDateTime recordedAt, String obs,

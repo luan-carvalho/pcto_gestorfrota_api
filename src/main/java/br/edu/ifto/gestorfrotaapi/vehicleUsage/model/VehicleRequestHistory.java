@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import br.edu.ifto.gestorfrotaapi.authentication.model.User;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.enums.RequestAction;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -26,6 +28,7 @@ public class VehicleRequestHistory {
     @JoinColumn(name = "performed_by")
     private User performedBy;
 
+    @Enumerated(EnumType.STRING)
     private RequestAction action;
 
     private String notes;

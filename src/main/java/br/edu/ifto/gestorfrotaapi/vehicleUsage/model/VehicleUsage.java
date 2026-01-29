@@ -7,6 +7,8 @@ import br.edu.ifto.gestorfrotaapi.vehicle.model.enums.MileageEntrySource;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.enums.RequestStatus;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.enums.VehicleUsageStatus;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -29,6 +31,7 @@ public class VehicleUsage {
     @JoinColumn(name = "driver_id", nullable = false)
     private User driver;
 
+    @Enumerated(EnumType.STRING)
     private VehicleUsageStatus status;
 
     private LocalDateTime checkInAt;
