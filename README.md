@@ -12,7 +12,7 @@ This project focuses on modernizing internal processes, ensuring better resource
 
 ### 🎓 Academic Context
 
-This API was developed by the **6th-period students** of the **Sistemas para Internet** (Internet Systems) course at the **Instituto Federal de Educação, Ciência e Tecnologia (IF)**.
+This API was developed by the **6th-period students** of the **Sistemas para Internet** (Internet Systems) course at the **Instituto Federal de Educação, Ciência e Tecnologia (IFTO)**.
 
 It serves as part of the practical curriculum to demonstrate proficiency in backend development, API architecture, and software deployment.
 
