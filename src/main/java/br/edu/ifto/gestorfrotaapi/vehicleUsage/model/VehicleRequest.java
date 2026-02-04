@@ -6,6 +6,8 @@ import java.util.List;
 
 import br.edu.ifto.gestorfrotaapi.authentication.model.User;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.Vehicle;
+import br.edu.ifto.gestorfrotaapi.vehicleUsage.exception.VehicleRequestApprovalException;
+import br.edu.ifto.gestorfrotaapi.vehicleUsage.exception.VehicleRequestCreationException;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.enums.RequestAction;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.enums.RequestPriority;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.enums.RequestStatus;
@@ -76,7 +78,7 @@ public class VehicleRequest {
             LocalDateTime startDateTime, LocalDateTime endDateTime, VehicleRequestPurpose purpose) {
 
         if (startDateTime.isAfter(endDateTime))
-            throw new IllegalArgumentException("Start date time cannot be after end date time");
+            throw new VehicleRequestCreationException("Start date time cannot be after end date time");
 
         this.requester = requester;
         this.vehicle = vehicle;
@@ -106,7 +108,7 @@ public class VehicleRequest {
     public void approve(User approvedBy, User driver, String notes) {
 
         if (this.status != RequestStatus.SENT_TO_MANAGER) {
-            throw new IllegalStateException(
+            throw new VehicleRequestApprovalException(
                     "Request cannot be approved from status " + this.status);
         }
 

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Objects;
 
 import br.edu.ifto.gestorfrotaapi.authentication.model.User;
+import br.edu.ifto.gestorfrotaapi.vehicle.exception.UpdateMileageException;
+import br.edu.ifto.gestorfrotaapi.vehicle.exception.VehicleCreationException;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.enums.MileageEntrySource;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.enums.VehicleStatus;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.enums.VehicleType;
@@ -54,7 +56,7 @@ public class Vehicle {
 
         if (capacity <= 0) {
 
-            throw new IllegalArgumentException("Capacity must be positive");
+            throw new VehicleCreationException("Capacity must be positive");
 
         }
 
@@ -139,11 +141,11 @@ public class Vehicle {
         Objects.requireNonNull(recordedBy, "User is required");
 
         if (newMileage < 0) {
-            throw new IllegalArgumentException("Mileage cannot be negative");
+            throw new UpdateMileageException("Mileage cannot be negative");
         }
 
         if (notes == null || notes.isBlank()) {
-            throw new IllegalArgumentException(
+            throw new UpdateMileageException(
                     "Admin correction requires justification");
         }
 

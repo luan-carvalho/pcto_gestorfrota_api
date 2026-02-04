@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import br.edu.ifto.gestorfrotaapi.authentication.model.User;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.enums.MileageEntrySource;
+import br.edu.ifto.gestorfrotaapi.vehicleUsage.exception.CheckInException;
+import br.edu.ifto.gestorfrotaapi.vehicleUsage.exception.CheckOutException;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.enums.RequestStatus;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.enums.VehicleUsageStatus;
 import jakarta.persistence.Entity;
@@ -55,15 +57,15 @@ public class VehicleUsage {
     public void checkIn(Integer mileageStart) {
 
         if (this.checkInAt != null) {
-            throw new IllegalStateException("Vehicle already checked in");
+            throw new CheckInException("Vehicle usaged already checked-in");
         }
 
         if (vehicleRequest.getStatus() != RequestStatus.APPROVED) {
-            throw new IllegalStateException("Request must be APPROVED to check in");
+            throw new CheckInException("Request must be APPROVED to check in");
         }
 
         if (mileageStart == null || mileageStart < 0) {
-            throw new IllegalArgumentException("Invalid mileage start");
+            throw new CheckInException("Invalid mileage start");
         }
 
         this.mileageStart = mileageStart;
@@ -75,15 +77,15 @@ public class VehicleUsage {
     public void checkOut(Integer mileageEnd, String notes) {
 
         if (this.checkInAt == null) {
-            throw new IllegalStateException("Cannot check out before check in");
+            throw new CheckOutException("Cannot check out before check in");
         }
 
         if (this.checkOutAt != null) {
-            throw new IllegalStateException("Vehicle already checked out");
+            throw new CheckOutException("Vehicle usaged already checked-out");
         }
 
         if (mileageEnd < mileageStart) {
-            throw new IllegalArgumentException(
+            throw new CheckOutException(
                     "Mileage end cannot be lower than mileage start");
         }
 

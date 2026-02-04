@@ -14,10 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import br.edu.ifto.gestorfrotaapi.authentication.model.User;
-import br.edu.ifto.gestorfrotaapi.authentication.service.UserService;
-import br.edu.ifto.gestorfrotaapi.vehicle.model.Vehicle;
-import br.edu.ifto.gestorfrotaapi.vehicle.service.VehicleService;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.command.OpenVehicleRequestCommand;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.VehicleRequestApprovalDto;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.VehicleRequestCreateRequestDto;
@@ -34,29 +30,24 @@ import jakarta.validation.Valid;
 public class VehicleRequestController {
 
     private final VehicleRequestService service;
-    private final VehicleService vehicleService;
-    private final UserService userService;
     private final VehicleUsageMapper mapper;
 
-    public VehicleRequestController(VehicleRequestService service, VehicleService vehicleService,
-            UserService userService, VehicleUsageMapper mapper) {
+    public VehicleRequestController(VehicleRequestService service, VehicleUsageMapper mapper) {
         this.service = service;
-        this.vehicleService = vehicleService;
-        this.userService = userService;
         this.mapper = mapper;
     }
 
     @GetMapping
     public Page<VehicleRequestResponseDto> getRequests(VehicleRequestFilter filter, Pageable pageable) {
 
-        return service.searchForVehicleRequest(filter, pageable).map(mapper::toRequestResponseDto);
+        return service.searchForVehicleRequest(filter, pageable);
 
     }
 
     @GetMapping("/my-requests")
     public Page<VehicleRequestResponseDto> getUserRequests(UserVehicleRequestFilter filter, Pageable pageable) {
 
-        return service.getUserRequests(filter, pageable).map(mapper::toRequestResponseDto);
+        return service.getUserRequests(filter, pageable);
 
     }
 
@@ -64,11 +55,9 @@ public class VehicleRequestController {
     public ResponseEntity<VehicleRequestResponseDto> openNewRequest(
             @RequestBody @Valid VehicleRequestCreateRequestDto dto) {
 
-        Vehicle requestedVehicle = vehicleService.findById(dto.requestedVehicleId());
-
         VehicleRequest created = service.create(
                 new OpenVehicleRequestCommand(
-                        requestedVehicle,
+                        dto.requestedVehicleId(),
                         dto.priority(),
                         dto.startDateTime(),
                         dto.endDateTime(),
@@ -90,9 +79,7 @@ public class VehicleRequestController {
     public ResponseEntity<Void> approveRequest(@PathVariable Long requestId,
             @RequestBody @Valid VehicleRequestApprovalDto dto) {
 
-        User assignedDriver = userService.findById(dto.driverId());
-
-        service.approve(requestId, assignedDriver, dto.notes());
+        service.approve(requestId, dto.driverId(), dto.notes());
 
         return ResponseEntity.ok().build();
 

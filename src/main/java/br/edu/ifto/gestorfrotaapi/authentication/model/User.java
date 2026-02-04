@@ -10,6 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import br.edu.ifto.gestorfrotaapi.authentication.exception.StatusUpdateException;
+import br.edu.ifto.gestorfrotaapi.authentication.exception.UserCreationException;
 import br.edu.ifto.gestorfrotaapi.authentication.model.enums.Role;
 import br.edu.ifto.gestorfrotaapi.authentication.model.enums.UserStatus;
 import jakarta.persistence.CollectionTable;
@@ -66,7 +67,7 @@ public class User implements UserDetails {
 
         if (roles.isEmpty()) {
 
-            throw new IllegalArgumentException("User must have at least one role");
+            throw new UserCreationException("User must have at least one role");
 
         }
 

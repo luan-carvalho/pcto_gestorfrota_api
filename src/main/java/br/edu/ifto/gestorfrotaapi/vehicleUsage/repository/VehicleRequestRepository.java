@@ -32,7 +32,7 @@ public interface VehicleRequestRepository
                         @Param("vehicleId") Long vehicleId,
                         @Param("activeStatuses") Collection<RequestStatus> activeStatuses);
 
-        @EntityGraph(attributePaths = "vehicle")
+        @EntityGraph(attributePaths = { "requester" })
         Page<VehicleRequest> findAll(Specification<VehicleRequest> spec, Pageable page);
 
 }

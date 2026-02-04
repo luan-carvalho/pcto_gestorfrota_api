@@ -21,12 +21,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.edu.ifto.gestorfrotaapi.authentication.model.User;
+import br.edu.ifto.gestorfrotaapi.authentication.model.enums.Role;
+import br.edu.ifto.gestorfrotaapi.authentication.service.UserService;
 import br.edu.ifto.gestorfrotaapi.authentication.util.SecurityUtils;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.Vehicle;
+import br.edu.ifto.gestorfrotaapi.vehicle.service.VehicleService;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.command.OpenVehicleRequestCommand;
+import br.edu.ifto.gestorfrotaapi.vehicleUsage.command.OpenVehicleUsageCommand;
+import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.VehicleRequestResponseDto;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.exception.RequestConflictException;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.exception.VehicleInactiveException;
+import br.edu.ifto.gestorfrotaapi.vehicleUsage.exception.VehicleRequestApprovalException;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.exception.VehicleRequestNotFoundException;
+import br.edu.ifto.gestorfrotaapi.vehicleUsage.mapper.VehicleUsageMapper;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.VehicleRequest;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.enums.RequestStatus;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.VehicleRequestRepository;
@@ -40,10 +47,17 @@ public class VehicleRequestService {
 
     private final VehicleRequestRepository requestRepo;
     private final VehicleUsageService usageService;
+    private final VehicleService vehicleService;
+    private final UserService userService;
+    private final VehicleUsageMapper mapper;
 
-    public VehicleRequestService(VehicleRequestRepository requestRepo, VehicleUsageService usageService) {
+    public VehicleRequestService(VehicleRequestRepository requestRepo, VehicleUsageService usageService,
+            VehicleService vehicleService, UserService userService, VehicleUsageMapper mapper) {
         this.requestRepo = requestRepo;
         this.usageService = usageService;
+        this.vehicleService = vehicleService;
+        this.userService = userService;
+        this.mapper = mapper;
     }
 
     @Transactional(readOnly = true)
@@ -59,11 +73,13 @@ public class VehicleRequestService {
 
         User requester = SecurityUtils.currentUser();
 
-        checkVehicleAvailability(cmd.vehicle(), cmd.startDateTime(), cmd.endDateTime());
+        Vehicle requestedVehicle = vehicleService.findById(cmd.vehicleId());
+
+        checkVehicleAvailability(requestedVehicle, cmd.startDateTime(), cmd.endDateTime());
 
         VehicleRequest created = requestRepo.save(VehicleRequest.create(
                 requester,
-                cmd.vehicle(),
+                requestedVehicle,
                 cmd.priority(),
                 cmd.processNumber(),
                 cmd.startDateTime(),
@@ -77,12 +93,25 @@ public class VehicleRequestService {
     }
 
     @PreAuthorize("hasRole('FLEET_MANAGER')")
-    public void approve(Long requestId, User driver, String notes) {
+    public void approve(Long requestId, Long driverId, String notes) {
+
+        User driver = userService.findById(driverId);
+
+        if (!driver.hasRole(Role.DRIVER)) {
+
+            throw new VehicleRequestApprovalException("The driver must have the role DRIVER");
+
+        }
 
         User approver = SecurityUtils.currentUser();
         VehicleRequest request = findById(requestId);
         checkVehicleAvailability(request.getVehicle(), request.getStartDateTime(), request.getEndDateTime());
         usageService.checkDriverConflicts(driver, request.getStartDateTime(), request.getEndDateTime());
+        usageService.create(
+                new OpenVehicleUsageCommand(
+                        request,
+                        driver));
+
         request.approve(approver, driver, notes);
 
     }
@@ -106,7 +135,7 @@ public class VehicleRequestService {
     }
 
     @Transactional(readOnly = true)
-    public Page<VehicleRequest> searchForVehicleRequest(VehicleRequestFilter filter, Pageable pageable) {
+    public Page<VehicleRequestResponseDto> searchForVehicleRequest(VehicleRequestFilter filter, Pageable pageable) {
 
         Specification<VehicleRequest> spec = Specification
                 .where(hasRequesterName(filter.requesterName()))
@@ -119,13 +148,13 @@ public class VehicleRequestService {
                 .and(createdBetween(filter.createdFrom(), filter.createdTo()))
                 .and(usageBetween(filter.usageFrom(), filter.usageTo()));
 
-        return requestRepo.findAll(spec, pageable);
+        return requestRepo.findAll(spec, pageable).map(mapper::toRequestResponseDto);
 
     }
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasRole('REQUESTER')")
-    public Page<VehicleRequest> getUserRequests(UserVehicleRequestFilter filter, Pageable pageable) {
+    public Page<VehicleRequestResponseDto> getUserRequests(UserVehicleRequestFilter filter, Pageable pageable) {
 
         User loggedUser = SecurityUtils.currentUser();
 
@@ -139,7 +168,7 @@ public class VehicleRequestService {
                 .and(hasProcessNumber(filter.processNumber()))
                 .and(usageBetween(filter.usageFrom(), filter.usageTo()));
 
-        return requestRepo.findAll(spec, pageable);
+        return requestRepo.findAll(spec, pageable).map(mapper::toRequestResponseDto);
 
     }
 
@@ -157,7 +186,7 @@ public class VehicleRequestService {
 
         }
 
-        if (vehicle.isActive()) {
+        if (!vehicle.isActive()) {
 
             throw new VehicleInactiveException(vehicle);
 
