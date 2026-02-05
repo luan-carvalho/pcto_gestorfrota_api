@@ -7,6 +7,7 @@ import org.mapstruct.Mapping;
 
 import br.edu.ifto.gestorfrotaapi.vehicle.dto.VehicleResponseDto;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.Vehicle;
+import br.edu.ifto.gestorfrotaapi.vehicle.model.valueObjects.LicensePlate;
 
 @Mapper(componentModel = "spring")
 public interface VehicleMapper {
@@ -15,5 +16,11 @@ public interface VehicleMapper {
 
     @Mapping(source = "status", target = "status")
     List<VehicleResponseDto> toResponseDto(List<Vehicle> vehicle);
+
+    default String mapLicensePlate(LicensePlate licensePlate) {
+
+        return licensePlate.toString();
+
+    }
 
 }

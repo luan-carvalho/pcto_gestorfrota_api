@@ -4,9 +4,7 @@ public record VehicleResponseDto(
         String make,
         String model,
         String licensePlate,
-        String type,
         String status,
-        Integer capacity,
         Integer currentMileage) {
 
 }

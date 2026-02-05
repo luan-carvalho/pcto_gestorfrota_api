@@ -2,11 +2,22 @@ package br.edu.ifto.gestorfrotaapi.authentication.dto;
 
 import java.util.List;
 
+import br.edu.ifto.gestorfrotaapi.authentication.command.UserUpdateCommand;
 import br.edu.ifto.gestorfrotaapi.authentication.model.enums.Role;
+import br.edu.ifto.gestorfrotaapi.authentication.model.valueObjects.Cpf;
 
 public record UserUpdateRequestDto(
         String name,
-        String registration,
+        String cpf,
         List<Role> roles) {
+    public UserUpdateCommand toCommand(Long userId) {
+
+        return new UserUpdateCommand(
+                userId,
+                name,
+                new Cpf(cpf),
+                roles);
+
+    }
 
 }

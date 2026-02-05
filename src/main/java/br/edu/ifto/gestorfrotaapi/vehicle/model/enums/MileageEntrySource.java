@@ -5,6 +5,6 @@ public enum MileageEntrySource {
     USAGE_CHECKOUT,
     ADMIN_CORRECTION,
     IMPORT,
-    INITIAL_REGISTRATION
+    INITIAL_cpf
 
 }

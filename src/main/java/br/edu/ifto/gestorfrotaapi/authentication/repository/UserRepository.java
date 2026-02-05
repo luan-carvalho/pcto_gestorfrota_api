@@ -21,10 +21,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
             """)
     Page<User> searchWithOptionalFilters(Pageable pageable, String name, UserStatus status);
 
-    Optional<User> findByRegistration(String registration);
+    Optional<User> findByCpf(String cpf);
 
-    Optional<User> findByRegistrationAndStatus(String registration, UserStatus status);
+    Optional<User> findByCpfAndStatus(String cpf, UserStatus status);
 
-    boolean existsByRegistration(String registration);
+    boolean existsBycpf(String cpf);
 
 }

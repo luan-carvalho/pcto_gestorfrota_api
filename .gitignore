@@ -1,6 +1,7 @@
 HELP.md
 README.md
 target/
+.github
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/

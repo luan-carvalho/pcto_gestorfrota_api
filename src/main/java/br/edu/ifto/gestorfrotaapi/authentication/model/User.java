@@ -13,9 +13,11 @@ import br.edu.ifto.gestorfrotaapi.authentication.exception.StatusUpdateException
 import br.edu.ifto.gestorfrotaapi.authentication.exception.UserCreationException;
 import br.edu.ifto.gestorfrotaapi.authentication.model.enums.Role;
 import br.edu.ifto.gestorfrotaapi.authentication.model.enums.UserStatus;
+import br.edu.ifto.gestorfrotaapi.authentication.model.valueObjects.Cpf;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -25,9 +27,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
+import lombok.Builder;
+import lombok.Getter;
 
 @Entity
 @Table(name = "users")
+@Getter
 public class User implements UserDetails {
 
     @Id
@@ -37,8 +42,8 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, unique = true)
-    private String registration;
+    @Embedded
+    private Cpf cpf;
 
     private String password;
 
@@ -58,10 +63,11 @@ public class User implements UserDetails {
 
     }
 
-    private User(String name, String registration, String firstAccessToken, List<Role> roles) {
+    @Builder
+    private User(String name, Cpf cpf, String firstAccessToken, List<Role> roles) {
 
         Objects.requireNonNull(name);
-        Objects.requireNonNull(registration);
+        Objects.requireNonNull(cpf);
         Objects.requireNonNull(roles);
         Objects.requireNonNull(firstAccessToken);
 
@@ -72,16 +78,10 @@ public class User implements UserDetails {
         }
 
         this.name = name;
-        this.registration = registration;
+        this.cpf = cpf;
         this.firstAccessToken = firstAccessToken;
         this.roles = roles;
-        this.status = UserStatus.FIRST_ACESS;
-
-    }
-
-    public static User create(String name, String registration, String firstAccessToken, List<Role> roles) {
-
-        return new User(name, registration, firstAccessToken, roles);
+        this.status = UserStatus.FIRST_ACCESS;
 
     }
 
@@ -102,7 +102,7 @@ public class User implements UserDetails {
 
     public void activate() {
 
-        if (this.status == UserStatus.FIRST_ACESS && firstAccessToken != null) {
+        if (this.status == UserStatus.FIRST_ACCESS && firstAccessToken != null) {
 
             throw new StatusUpdateException("Cannot change the status of a user with the first access pending");
 
@@ -125,7 +125,7 @@ public class User implements UserDetails {
         this.password = newPassword;
     }
 
-    public void updateInfo(String name, String registration, List<Role> roles) {
+    public void updateInfo(String name, List<Role> roles) {
 
         if (!isActive()) {
 
@@ -136,9 +136,6 @@ public class User implements UserDetails {
         if (name != null && !name.isBlank())
             this.name = name;
 
-        if (registration != null && !registration.isBlank())
-            this.registration = registration;
-
         if (roles != null && !roles.isEmpty())
             this.roles = roles;
 
@@ -146,7 +143,7 @@ public class User implements UserDetails {
 
     public boolean verifyFirstAccess(String token) {
 
-        return token.equals(this.firstAccessToken) && this.status == UserStatus.FIRST_ACESS;
+        return token.equals(this.firstAccessToken) && this.status == UserStatus.FIRST_ACCESS;
 
     }
 
@@ -156,30 +153,6 @@ public class User implements UserDetails {
         this.status = UserStatus.ACTIVE;
         this.firstAccessToken = null;
 
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getRegistration() {
-        return registration;
-    }
-
-    public UserStatus getStatus() {
-        return status;
-    }
-
-    public List<Role> getRoles() {
-        return roles;
-    }
-
-    public String getFirstAccessToken() {
-        return firstAccessToken;
     }
 
     public boolean hasRole(Role role) {
@@ -203,7 +176,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.registration;
+        return this.cpf.getValue();
     }
 
     @Override
@@ -211,7 +184,7 @@ public class User implements UserDetails {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((registration == null) ? 0 : registration.hashCode());
+        result = prime * result + ((cpf == null) ? 0 : cpf.hashCode());
         return result;
     }
 
@@ -229,10 +202,10 @@ public class User implements UserDetails {
                 return false;
         } else if (!id.equals(other.id))
             return false;
-        if (registration == null) {
-            if (other.registration != null)
+        if (cpf == null) {
+            if (other.cpf != null)
                 return false;
-        } else if (!registration.equals(other.registration))
+        } else if (!cpf.equals(other.cpf))
             return false;
         return true;
     }

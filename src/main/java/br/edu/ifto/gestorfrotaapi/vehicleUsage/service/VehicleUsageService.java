@@ -10,7 +10,6 @@ import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleUsageSpecification.hasVehicleRequestId;
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleUsageSpecification.usageBetween;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -20,14 +19,22 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.edu.ifto.gestorfrotaapi.authentication.dto.UserResponseDto;
+import br.edu.ifto.gestorfrotaapi.authentication.mapper.UserMapper;
 import br.edu.ifto.gestorfrotaapi.authentication.model.User;
 import br.edu.ifto.gestorfrotaapi.authentication.util.SecurityUtils;
+import br.edu.ifto.gestorfrotaapi.vehicle.dto.VehicleResponseDto;
+import br.edu.ifto.gestorfrotaapi.vehicle.mapper.VehicleMapper;
+import br.edu.ifto.gestorfrotaapi.vehicle.model.Vehicle;
+import br.edu.ifto.gestorfrotaapi.vehicleRequest.model.valueObjects.UsagePeriod;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.command.OpenVehicleUsageCommand;
+import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.VehicleUsageResponseDto;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.exception.DriverNotAvaliableException;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.exception.NotAssignedDriverException;
+import br.edu.ifto.gestorfrotaapi.vehicleUsage.exception.VehicleNotAvailableException;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.exception.VehicleUsageNotFoundException;
+import br.edu.ifto.gestorfrotaapi.vehicleUsage.mapper.VehicleUsageMapper;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.VehicleUsage;
-import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.enums.VehicleUsageStatus;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.VehicleUsageRepository;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.filters.UserVehicleUsageFilter;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.filters.VehicleUsageFilter;
@@ -37,12 +44,26 @@ import br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.filters.VehicleUsageFi
 public class VehicleUsageService {
 
     private final VehicleUsageRepository usageRepo;
+    private final VehicleUsageMapper mapper;
+    private final UserMapper userMapper;
+    private final VehicleMapper vehicleMapper;
 
-    public VehicleUsageService(VehicleUsageRepository usageRepo) {
+    public VehicleUsageService(VehicleUsageRepository usageRepo, VehicleUsageMapper mapper, UserMapper userMapper,
+            VehicleMapper vehicleMapper) {
         this.usageRepo = usageRepo;
+        this.mapper = mapper;
+        this.userMapper = userMapper;
+        this.vehicleMapper = vehicleMapper;
     }
 
-    public VehicleUsage findById(Long id) {
+    @PreAuthorize("hasAnyRole('DRIVER', 'FLEET_MANAGER')")
+    public VehicleUsageResponseDto findById(Long id) {
+
+        return mapper.toUsageResponseDto(getById(id));
+
+    }
+
+    private VehicleUsage getById(Long id) {
 
         return usageRepo.findById(id)
                 .orElseThrow(() -> new VehicleUsageNotFoundException(
@@ -53,7 +74,12 @@ public class VehicleUsageService {
     @PreAuthorize("hasRole('FLEET_MANAGER')")
     public void create(OpenVehicleUsageCommand cmd) {
 
-        VehicleUsage usage = VehicleUsage.create(cmd.request(), cmd.driver());
+        VehicleUsage usage = VehicleUsage.builder()
+                .request(cmd.request())
+                .driver(cmd.driver())
+                .vehicle(cmd.vehicle())
+                .build();
+
         usageRepo.save(usage);
 
     }
@@ -63,7 +89,7 @@ public class VehicleUsageService {
 
         User driver = SecurityUtils.currentUser();
 
-        VehicleUsage usage = findById(usageId);
+        VehicleUsage usage = getById(usageId);
 
         if (!usage.getDriver().equals(driver)) {
 
@@ -80,7 +106,7 @@ public class VehicleUsageService {
 
         User driver = SecurityUtils.currentUser();
 
-        VehicleUsage usage = findById(usageId);
+        VehicleUsage usage = getById(usageId);
 
         if (!usage.getDriver().equals(driver)) {
 
@@ -93,14 +119,23 @@ public class VehicleUsageService {
     }
 
     @PreAuthorize("hasRole('FLEET_MANAGER')")
-    public void checkDriverConflicts(User driver, LocalDateTime usageStart, LocalDateTime usageEnd) {
+    public List<UserResponseDto> findAvailableDrivers(UsagePeriod period) {
 
-        boolean hasConflict = usageRepo
-                .existsConflict(
-                        usageStart,
-                        usageEnd,
-                        driver.getId(),
-                        List.of(VehicleUsageStatus.NOT_STARTED, VehicleUsageStatus.STARTED));
+        return userMapper.toResponseDto(usageRepo.findAvailableDrivers(period));
+
+    }
+
+    @PreAuthorize("hasRole('FLEET_MANAGER')")
+    public List<VehicleResponseDto> findAvailableVehicles(UsagePeriod period) {
+
+        return vehicleMapper.toResponseDto(usageRepo.findAvailableVehicles(period));
+
+    }
+
+    @PreAuthorize("hasRole('FLEET_MANAGER')")
+    public void checkDriverConflicts(User driver, UsagePeriod period) {
+
+        boolean hasConflict = usageRepo.existsDriverConflict(driver, period);
 
         if (hasConflict) {
 
@@ -111,8 +146,21 @@ public class VehicleUsageService {
     }
 
     @PreAuthorize("hasRole('FLEET_MANAGER')")
+    public void checkVehicleConflicts(Vehicle vehicle, UsagePeriod period) {
+
+        boolean hasConflict = usageRepo.existsVehicleConflict(vehicle, period);
+
+        if (hasConflict) {
+
+            throw new VehicleNotAvailableException();
+
+        }
+
+    }
+
+    @PreAuthorize("hasRole('FLEET_MANAGER')")
     @Transactional(readOnly = true)
-    public Page<VehicleUsage> searchForVehicleUsage(VehicleUsageFilter filter, Pageable pageable) {
+    public Page<VehicleUsageResponseDto> searchForVehicleUsage(VehicleUsageFilter filter, Pageable pageable) {
 
         Specification<VehicleUsage> spec = Specification
                 .where(hasDriverName(filter.driverName()))
@@ -122,13 +170,13 @@ public class VehicleUsageService {
                 .and(checkOutBetween(filter.checkOutFrom(), filter.checkOutTo()))
                 .and(hasStatus(filter.status()));
 
-        return usageRepo.findAll(spec, pageable);
+        return usageRepo.findAll(spec, pageable).map(mapper::toUsageResponseDto);
 
     }
 
     @PreAuthorize("hasRole('DRIVER')")
     @Transactional(readOnly = true)
-    public Page<VehicleUsage> getDriverUsages(UserVehicleUsageFilter filter, Pageable pageable) {
+    public Page<VehicleUsageResponseDto> getDriverUsages(UserVehicleUsageFilter filter, Pageable pageable) {
 
         User loggedDriver = SecurityUtils.currentUser();
 
@@ -140,7 +188,7 @@ public class VehicleUsageService {
                 .and(hasStatus(filter.status()))
                 .and(usageBetween(filter.usageFrom(), filter.usageTo()));
 
-        return usageRepo.findAll(spec, pageable);
+        return usageRepo.findAll(spec, pageable).map(mapper::toUsageResponseDto);
 
     }
 

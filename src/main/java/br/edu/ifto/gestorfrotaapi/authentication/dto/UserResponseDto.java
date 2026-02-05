@@ -7,7 +7,7 @@ import br.edu.ifto.gestorfrotaapi.authentication.model.enums.UserStatus;
 
 public record UserResponseDto(
                 Long id,
-                String registration,
+                String cpf,
                 String name,
                 UserStatus status,
                 List<Role> roles) {

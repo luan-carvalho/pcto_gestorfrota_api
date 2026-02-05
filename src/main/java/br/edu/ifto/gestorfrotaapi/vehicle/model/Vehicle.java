@@ -7,10 +7,12 @@ import java.util.Objects;
 
 import br.edu.ifto.gestorfrotaapi.authentication.model.User;
 import br.edu.ifto.gestorfrotaapi.vehicle.exception.UpdateMileageException;
-import br.edu.ifto.gestorfrotaapi.vehicle.exception.VehicleCreationException;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.enums.MileageEntrySource;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.enums.VehicleStatus;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.enums.VehicleType;
+import br.edu.ifto.gestorfrotaapi.vehicle.model.valueObjects.LicensePlate;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -18,21 +20,30 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import lombok.Builder;
+import lombok.Getter;
 
 @Entity
+@Getter
 public class Vehicle {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String model;
+
+    @Column(nullable = false)
     private String make;
-    private String licensePlate;
+
+    @Embedded
+    private LicensePlate licensePlate;
 
     @Enumerated(EnumType.STRING)
     private VehicleType type;
 
-    private Integer capacity;
+    @Column(nullable = false)
     private Integer currentMileage;
 
     @Enumerated(EnumType.STRING)
@@ -45,7 +56,8 @@ public class Vehicle {
 
     }
 
-    private Vehicle(String model, String make, String licensePlate, VehicleType type, Integer capacity,
+    @Builder
+    private Vehicle(String model, String make, LicensePlate licensePlate,
             Integer currentMileage,
             User createdBy) {
 
@@ -54,35 +66,17 @@ public class Vehicle {
         Objects.requireNonNull(licensePlate);
         Objects.requireNonNull(createdBy);
 
-        if (capacity <= 0) {
-
-            throw new VehicleCreationException("Capacity must be positive");
-
-        }
-
         this.model = model;
         this.make = make;
         this.licensePlate = licensePlate;
-        this.type = type;
         this.status = VehicleStatus.ACTIVE;
-        this.capacity = capacity;
         this.mileageHistory = new ArrayList<>();
 
         updateMileage(
                 currentMileage,
-                MileageEntrySource.INITIAL_REGISTRATION,
+                MileageEntrySource.INITIAL_cpf,
                 createdBy,
-                "Initial registration");
-
-    }
-
-    public static Vehicle create(String model, String make, String licensePlate, VehicleType type, Integer capacity,
-            Integer currentMileage,
-            User createdBy) {
-
-        return new Vehicle(model, make, licensePlate, type, capacity,
-                currentMileage,
-                createdBy);
+                "Initial cpf");
 
     }
 
@@ -96,38 +90,6 @@ public class Vehicle {
 
         this.status = VehicleStatus.INACTIVE;
 
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public String getMake() {
-        return make;
-    }
-
-    public String getLicensePlate() {
-        return licensePlate;
-    }
-
-    public VehicleType getType() {
-        return type;
-    }
-
-    public Integer getCapacity() {
-        return capacity;
-    }
-
-    public Integer getCurrentMileage() {
-        return currentMileage;
-    }
-
-    public VehicleStatus getStatus() {
-        return status;
     }
 
     public void updateMileage(
@@ -168,7 +130,7 @@ public class Vehicle {
 
     }
 
-    public void updateInfo(String licensePlate, String make, String model, VehicleType type, Integer capacity) {
+    public void updateInfo(LicensePlate licensePlate, String make, String model) {
 
         if (model != null) {
             this.model = model;
@@ -178,12 +140,6 @@ public class Vehicle {
         }
         if (licensePlate != null) {
             this.licensePlate = licensePlate;
-        }
-        if (type != null) {
-            this.type = type;
-        }
-        if (capacity != null) {
-            this.capacity = capacity;
         }
 
     }

@@ -5,9 +5,10 @@ import java.util.List;
 import br.edu.ifto.gestorfrotaapi.authentication.model.enums.Role;
 
 public record LoginResponseDto(
-                String token,
-                String type,
-                String username,
-                List<Role> roles) {
+        String token,
+        String name,
+        List<Role> roles) {
+
+    public static final String type = "Bearer";
 
 }

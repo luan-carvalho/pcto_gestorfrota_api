@@ -11,6 +11,7 @@ import br.edu.ifto.gestorfrotaapi.vehicle.command.CreateVehicleCommand;
 import br.edu.ifto.gestorfrotaapi.vehicle.command.UpdateVehicleCommand;
 import br.edu.ifto.gestorfrotaapi.vehicle.exception.VehicleNotFoundException;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.Vehicle;
+import br.edu.ifto.gestorfrotaapi.vehicle.model.valueObjects.LicensePlate;
 import br.edu.ifto.gestorfrotaapi.vehicle.repository.VehicleRepository;
 
 @Service
@@ -41,8 +42,14 @@ public class VehicleService {
 
         User createdBy = SecurityUtils.currentUser();
 
-        return repository.save(Vehicle.create(cmd.model(), cmd.make(), cmd.licensePlate(), cmd.type(), cmd.capacity(),
-                cmd.currentMileage(), createdBy));
+        return repository.save(
+                Vehicle.builder()
+                        .model(cmd.model())
+                        .make(cmd.make())
+                        .licensePlate(new LicensePlate(cmd.licensePlate()))
+                        .currentMileage(cmd.currentMileage())
+                        .createdBy(createdBy)
+                        .build());
 
     }
 
@@ -51,11 +58,9 @@ public class VehicleService {
         Vehicle toBeUpdated = findById(id);
 
         toBeUpdated.updateInfo(
-                cmd.licensePlate(),
+                new LicensePlate(cmd.licensePlate()),
                 cmd.make(),
-                cmd.model(),
-                cmd.type(),
-                cmd.capacity());
+                cmd.model());
 
         return toBeUpdated;
 

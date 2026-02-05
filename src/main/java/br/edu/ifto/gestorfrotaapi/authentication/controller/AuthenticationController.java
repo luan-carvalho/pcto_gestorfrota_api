@@ -2,20 +2,17 @@ package br.edu.ifto.gestorfrotaapi.authentication.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.edu.ifto.gestorfrotaapi.authentication.dto.ActivateFirstAccessDto;
+import br.edu.ifto.gestorfrotaapi.authentication.dto.ActivateUserDto;
 import br.edu.ifto.gestorfrotaapi.authentication.dto.LoginDto;
 import br.edu.ifto.gestorfrotaapi.authentication.dto.LoginResponseDto;
 import br.edu.ifto.gestorfrotaapi.authentication.dto.UpdatePasswordDto;
 import br.edu.ifto.gestorfrotaapi.authentication.dto.VerifyFirstAccessDto;
-import br.edu.ifto.gestorfrotaapi.authentication.model.User;
 import br.edu.ifto.gestorfrotaapi.authentication.service.AuthenticationService;
 import jakarta.validation.Valid;
 
@@ -23,39 +20,31 @@ import jakarta.validation.Valid;
 @RequestMapping("auth")
 public class AuthenticationController {
 
-    private final AuthenticationManager authManager;
     private final AuthenticationService authService;
 
-    public AuthenticationController(AuthenticationManager authManager, AuthenticationService authService) {
-        this.authManager = authManager;
+    public AuthenticationController(AuthenticationService authService) {
         this.authService = authService;
     }
 
     @PostMapping("/first-access/verify")
     public ResponseEntity<Void> verifyUserFirstAccess(@RequestBody @Valid VerifyFirstAccessDto dto) {
 
-        authService.verifyFirstAccess(dto.registration(), dto.token());
+        authService.verifyFirstAccess(dto.toCommand());
         return ResponseEntity.noContent().build();
 
     }
 
     @PatchMapping("/first-access/activate")
-    public ResponseEntity<Void> activateUserFirstAccess(@RequestBody @Valid ActivateFirstAccessDto dto) {
+    public ResponseEntity<Void> activateUserFirstAccess(@RequestBody @Valid ActivateUserDto dto) {
 
-        authService.activateFirstAccess(dto.registration(), dto.token(), dto.password());
-        return ResponseEntity.ok().build();
+        authService.activateFirstAccess(dto.toCommand());
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> login(@RequestBody @Valid LoginDto data) {
+    public ResponseEntity<LoginResponseDto> login(@RequestBody @Valid LoginDto dto) {
 
-        var authToken = new UsernamePasswordAuthenticationToken(data.registration(), data.password());
-        var auth = authManager.authenticate(authToken);
-        User user = (User) auth.getPrincipal();
-        var token = authService.generateToken(user.getUsername());
-
-        return ResponseEntity
-                .ok(new LoginResponseDto(token, "Bearer", user.getFirstName(), user.getRoles()));
+        return ResponseEntity.ok(authService.login(dto.toCommand()));
 
     }
 
@@ -64,7 +53,7 @@ public class AuthenticationController {
     public ResponseEntity<Void> updatePassword(
             @RequestBody @Valid UpdatePasswordDto dto) {
 
-        authService.updateOwnPassword(dto.currentPassword(), dto.newPassword());
+        authService.updateOwnPassword(dto.toCommand());
         return ResponseEntity.noContent().build();
 
     }

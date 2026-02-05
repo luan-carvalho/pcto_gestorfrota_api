@@ -3,22 +3,28 @@ package br.edu.ifto.gestorfrotaapi.vehicleUsage.model;
 import java.time.LocalDateTime;
 
 import br.edu.ifto.gestorfrotaapi.authentication.model.User;
+import br.edu.ifto.gestorfrotaapi.vehicle.model.Vehicle;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.enums.MileageEntrySource;
+import br.edu.ifto.gestorfrotaapi.vehicleRequest.model.VehicleRequest;
+import br.edu.ifto.gestorfrotaapi.vehicleRequest.model.enums.RequestStatus;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.exception.CheckInException;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.exception.CheckOutException;
-import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.enums.RequestStatus;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.enums.VehicleUsageStatus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+import lombok.Builder;
+import lombok.Getter;
 
 @Entity
+@Getter
 public class VehicleUsage {
 
     @Id
@@ -27,7 +33,7 @@ public class VehicleUsage {
 
     @OneToOne
     @JoinColumn(name = "vehicle_request_id", nullable = false, unique = true)
-    private VehicleRequest vehicleRequest;
+    private VehicleRequest request;
 
     @ManyToOne
     @JoinColumn(name = "driver_id", nullable = false)
@@ -35,6 +41,10 @@ public class VehicleUsage {
 
     @Enumerated(EnumType.STRING)
     private VehicleUsageStatus status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vehicle_id")
+    private Vehicle vehicle;
 
     private LocalDateTime checkInAt;
     private LocalDateTime checkOutAt;
@@ -44,14 +54,12 @@ public class VehicleUsage {
     protected VehicleUsage() {
     }
 
-    private VehicleUsage(VehicleRequest vehicleRequest, User driver) {
-        this.vehicleRequest = vehicleRequest;
+    @Builder
+    private VehicleUsage(VehicleRequest request, User driver, Vehicle vehicle) {
+        this.request = request;
         this.driver = driver;
         this.status = VehicleUsageStatus.NOT_STARTED;
-    }
-
-    public static VehicleUsage create(VehicleRequest vehicleRequest, User driver) {
-        return new VehicleUsage(vehicleRequest, driver);
+        this.vehicle = vehicle;
     }
 
     public void checkIn(Integer mileageStart) {
@@ -60,7 +68,7 @@ public class VehicleUsage {
             throw new CheckInException("Vehicle usaged already checked-in");
         }
 
-        if (vehicleRequest.getStatus() != RequestStatus.APPROVED) {
+        if (request.getStatus() != RequestStatus.APPROVED) {
             throw new CheckInException("Request must be APPROVED to check in");
         }
 
@@ -91,53 +99,19 @@ public class VehicleUsage {
 
         this.mileageEnd = mileageEnd;
         this.checkOutAt = LocalDateTime.now();
-        this.vehicleRequest.getVehicle().updateMileage(
+        this.vehicle.updateMileage(
                 mileageEnd,
                 MileageEntrySource.USAGE_CHECKOUT,
                 driver,
-                notes != null ? notes : "Checkout from  Vehicle Request #" + vehicleRequest.getId());
+                notes != null ? notes : "Checkout from  Vehicle Request #" + request.getId());
         this.status = VehicleUsageStatus.FINISHED;
 
     }
 
     public void cancel() {
 
-        // add more logic later
-
         this.status = VehicleUsageStatus.CANCELED;
 
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public VehicleRequest getVehicleRequest() {
-        return vehicleRequest;
-    }
-
-    public User getDriver() {
-        return driver;
-    }
-
-    public LocalDateTime getCheckInAt() {
-        return checkInAt;
-    }
-
-    public LocalDateTime getCheckOutAt() {
-        return checkOutAt;
-    }
-
-    public Integer getMileageStart() {
-        return mileageStart;
-    }
-
-    public Integer getMileageEnd() {
-        return mileageEnd;
-    }
-
-    public VehicleUsageStatus getStatus() {
-        return status;
     }
 
 }

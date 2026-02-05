@@ -20,10 +20,10 @@ public class IUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String registration) {
+    public UserDetails loadUserByUsername(String cpf) {
 
-        User user = repository.findByRegistrationAndStatus(registration, UserStatus.ACTIVE)
-                .orElseThrow(() -> new UserNotFoundException(registration));
+        User user = repository.findByCpfAndStatus(cpf, UserStatus.ACTIVE)
+                .orElseThrow(() -> new UserNotFoundException());
 
         if (!user.isActive()) {
 

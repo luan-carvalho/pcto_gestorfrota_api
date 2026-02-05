@@ -13,42 +13,44 @@ import org.springframework.web.bind.annotation.RestController;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.CheckInRequestDto;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.CheckOutRequestDto;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.dto.VehicleUsageResponseDto;
-import br.edu.ifto.gestorfrotaapi.vehicleUsage.mapper.VehicleUsageMapper;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.filters.UserVehicleUsageFilter;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.filters.VehicleUsageFilter;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.service.VehicleUsageService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("usage")
+@RequestMapping("usages")
 public class VehicleUsageController {
 
     private final VehicleUsageService service;
-    private final VehicleUsageMapper mapper;
 
-    public VehicleUsageController(VehicleUsageService service, VehicleUsageMapper mapper) {
+    public VehicleUsageController(VehicleUsageService service) {
         this.service = service;
-        this.mapper = mapper;
     }
 
     @GetMapping
     public Page<VehicleUsageResponseDto> getUsages(VehicleUsageFilter filter, Pageable pageable) {
 
-        return service.searchForVehicleUsage(filter, pageable).map(mapper::toUsageResponseDto);
+        return service.searchForVehicleUsage(filter, pageable);
 
     }
 
-    @GetMapping("my-usages")
+    @GetMapping("/{id}")
+    public ResponseEntity<VehicleUsageResponseDto> getUsageDetails(@PathVariable Long id) {
+
+        return ResponseEntity.ok(service.findById(id));
+
+    }
+
+    @GetMapping("/my-usages")
     public Page<VehicleUsageResponseDto> getDriverUsages(UserVehicleUsageFilter filter, Pageable pageable) {
 
-        return service.getDriverUsages(filter, pageable).map(mapper::toUsageResponseDto);
+        return service.getDriverUsages(filter, pageable);
 
     }
 
     @PatchMapping("/{usageId}/check-in")
     public ResponseEntity<Void> checkIn(@PathVariable Long usageId, @RequestBody @Valid CheckInRequestDto dto) {
-
-        System.out.println(dto.currentMileage());
 
         service.checkIn(usageId, dto.currentMileage());
         return ResponseEntity.ok().build();
