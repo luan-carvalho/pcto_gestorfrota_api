@@ -1,13 +1,11 @@
 package br.edu.ifto.gestorfrotaapi.vehicle.command;
 
-import br.edu.ifto.gestorfrotaapi.vehicle.model.enums.VehicleType;
+import br.edu.ifto.gestorfrotaapi.vehicle.model.valueObjects.LicensePlate;
 
 public record CreateVehicleCommand(
-                String model,
-                String make,
-                String licensePlate,
-                VehicleType type,
-                Integer capacity,
-                Integer currentMileage) {
+        String model,
+        String make,
+        LicensePlate licensePlate,
+        Integer currentMileage) {
 
 }

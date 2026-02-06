@@ -1,4 +1,4 @@
-package br.edu.ifto.gestorfrotaapi.authentication.security;
+package br.edu.ifto.gestorfrotaapi.security;
 
 import java.io.IOException;
 
@@ -10,8 +10,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import br.edu.ifto.gestorfrotaapi.authentication.exception.UserNotFoundException;
 import br.edu.ifto.gestorfrotaapi.authentication.model.enums.UserStatus;
+import br.edu.ifto.gestorfrotaapi.authentication.model.valueObjects.Cpf;
 import br.edu.ifto.gestorfrotaapi.authentication.repository.UserRepository;
-import br.edu.ifto.gestorfrotaapi.authentication.service.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,7 +38,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 
             var cpf = tokenService.validateToken(token);
 
-            UserDetails user = userRepository.findByCpfAndStatus(cpf, UserStatus.ACTIVE)
+            UserDetails user = userRepository.findByCpfAndStatus(new Cpf(cpf), UserStatus.ACTIVE)
                     .orElseThrow(() -> new UserNotFoundException());
 
             var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());

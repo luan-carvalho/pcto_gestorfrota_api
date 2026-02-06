@@ -16,6 +16,8 @@ public interface VehicleUsageMapper {
 
     @Mapping(source = "driver.name", target = "driverName")
     @Mapping(source = "request.id", target = "requestId")
+    @Mapping(source = "request.period.startDateTime", target = "usageStart")
+    @Mapping(source = "request.period.endDateTime", target = "usageEnd")
     VehicleUsageResponseDto toUsageResponseDto(VehicleUsage request);
 
     @Mapping(source = "driver.name", target = "driverName")

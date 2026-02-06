@@ -1,14 +1,14 @@
 package br.edu.ifto.gestorfrotaapi.vehicleUsage.service;
 
-import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleUsageSpecification.checkInBetween;
-import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleUsageSpecification.checkOutBetween;
-import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleUsageSpecification.hasDriverId;
-import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleUsageSpecification.hasDriverName;
-import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleUsageSpecification.hasRequesterName;
-import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleUsageSpecification.hasStatus;
-import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleUsageSpecification.hasVehicleDescription;
-import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleUsageSpecification.hasVehicleRequestId;
-import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications.VehicleUsageSpecification.usageBetween;
+import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.spec.VehicleUsageSpecification.checkInBetween;
+import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.spec.VehicleUsageSpecification.checkOutBetween;
+import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.spec.VehicleUsageSpecification.hasDriverId;
+import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.spec.VehicleUsageSpecification.hasDriverName;
+import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.spec.VehicleUsageSpecification.hasRequesterName;
+import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.spec.VehicleUsageSpecification.hasStatus;
+import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.spec.VehicleUsageSpecification.hasVehicleDescription;
+import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.spec.VehicleUsageSpecification.hasVehicleRequestId;
+import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.spec.VehicleUsageSpecification.usageBetween;
 
 import java.util.List;
 

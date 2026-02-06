@@ -1,4 +1,4 @@
-package br.edu.ifto.gestorfrotaapi.authentication.service;
+package br.edu.ifto.gestorfrotaapi.security;
 
 import java.time.Instant;
 import java.time.LocalDateTime;

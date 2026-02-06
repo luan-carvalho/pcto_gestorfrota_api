@@ -1,4 +1,4 @@
-package br.edu.ifto.gestorfrotaapi.vehicleRequest.repository.specifications;
+package br.edu.ifto.gestorfrotaapi.vehicleRequest.repository.spec;
 
 import java.time.LocalDateTime;
 
@@ -38,20 +38,6 @@ public class VehicleRequestSpecification {
         };
     }
 
-    public static Specification<VehicleRequest> hasVehicleLicensePlate(String licensePlate) {
-        return (root, query, cb) -> {
-
-            if (licensePlate == null || licensePlate.isBlank()) {
-
-                return null;
-
-            }
-
-            return cb.like(cb.lower(root.get("vehicle").get("licensePlate")), "%" + licensePlate.toLowerCase() + "%");
-
-        };
-    }
-
     public static Specification<VehicleRequest> hasVehicleDescription(String description) {
 
         return (root, query, cb) -> {
@@ -70,7 +56,7 @@ public class VehicleRequestSpecification {
             var concat = cb.concat(
                     cb.concat(make, " "),
                     cb.concat(model, ""));
-                    
+
             var searchDescription = cb.concat(concat, licensePlate);
 
             return cb.like(searchDescription, pattern);

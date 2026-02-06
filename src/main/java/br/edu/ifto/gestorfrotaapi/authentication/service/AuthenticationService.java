@@ -19,6 +19,7 @@ import br.edu.ifto.gestorfrotaapi.authentication.model.User;
 import br.edu.ifto.gestorfrotaapi.authentication.model.enums.UserStatus;
 import br.edu.ifto.gestorfrotaapi.authentication.repository.UserRepository;
 import br.edu.ifto.gestorfrotaapi.authentication.util.SecurityUtils;
+import br.edu.ifto.gestorfrotaapi.security.TokenService;
 
 @Service
 @Transactional
@@ -52,7 +53,7 @@ public class AuthenticationService {
 
     public void verifyFirstAccess(CheckUserFirstAccesCommand cmd) {
 
-        User user = userRepo.findByCpf(cmd.cpf().getValue())
+        User user = userRepo.findByCpf(cmd.cpf())
                 .orElseThrow(() -> new UserNotFoundException());
 
         if (!user.verifyFirstAccess(cmd.token())) {
@@ -65,7 +66,7 @@ public class AuthenticationService {
 
     public void activateFirstAccess(ActivateUserCommand cmd) {
 
-        User user = userRepo.findByCpfAndStatus(cmd.cpf().getValue(), UserStatus.FIRST_ACCESS)
+        User user = userRepo.findByCpfAndStatus(cmd.cpf(), UserStatus.FIRST_ACCESS)
                 .orElseThrow(() -> new UserNotFoundException());
 
         if (!user.verifyFirstAccess(cmd.token())) {

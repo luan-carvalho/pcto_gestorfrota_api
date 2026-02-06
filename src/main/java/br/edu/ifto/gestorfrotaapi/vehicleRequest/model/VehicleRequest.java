@@ -11,6 +11,7 @@ import br.edu.ifto.gestorfrotaapi.vehicleRequest.model.enums.RequestAction;
 import br.edu.ifto.gestorfrotaapi.vehicleRequest.model.enums.RequestPriority;
 import br.edu.ifto.gestorfrotaapi.vehicleRequest.model.enums.RequestStatus;
 import br.edu.ifto.gestorfrotaapi.vehicleRequest.model.enums.VehicleRequestPurpose;
+import br.edu.ifto.gestorfrotaapi.vehicleRequest.model.valueObjects.Location;
 import br.edu.ifto.gestorfrotaapi.vehicleRequest.model.valueObjects.UsagePeriod;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.model.VehicleUsage;
 import jakarta.persistence.CascadeType;
@@ -46,9 +47,6 @@ public class VehicleRequest {
     @Column(nullable = false)
     private String description;
 
-    @Column(nullable = false)
-    private String address;
-
     @OneToMany(mappedBy = "request", cascade = CascadeType.ALL)
     private List<VehicleRequestHistory> history = new ArrayList<>();
 
@@ -69,6 +67,9 @@ public class VehicleRequest {
     @Embedded
     private UsagePeriod period;
 
+    @Embedded
+    private Location destination;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private VehicleRequestPurpose purpose;
@@ -83,8 +84,14 @@ public class VehicleRequest {
     }
 
     @Builder(buildMethodName = "build")
-    private VehicleRequest(User requester, RequestPriority priority, String processNumber,
-            UsagePeriod period, VehicleRequestPurpose purpose, String description, String address) {
+    private VehicleRequest(
+            User requester,
+            RequestPriority priority,
+            String processNumber,
+            UsagePeriod period,
+            VehicleRequestPurpose purpose,
+            String description,
+            Location destination) {
 
         this.requester = Objects.requireNonNull(requester);
         this.priority = Objects.requireNonNull(priority);
@@ -92,14 +99,15 @@ public class VehicleRequest {
         this.purpose = Objects.requireNonNull(purpose);
         this.period = Objects.requireNonNull(period);
         this.description = Objects.requireNonNull(description);
+        this.destination = Objects.requireNonNull(destination);
 
         this.status = RequestStatus.SENT_TO_MANAGER;
-        this.history.add(new VehicleRequestHistory(
-                this,
-                requester,
-                RequestAction.CREATED,
-                this.createdAt,
-                "Request created"));
+        this.history.add(
+                new VehicleRequestHistory(
+                        this,
+                        requester,
+                        RequestAction.CREATED,
+                        "Request created"));
 
     }
 
@@ -115,7 +123,6 @@ public class VehicleRequest {
                 this,
                 approvedBy,
                 RequestAction.APPROVED,
-                LocalDateTime.now(),
                 notes));
 
     }
@@ -127,7 +134,6 @@ public class VehicleRequest {
                 this,
                 rejectedBy,
                 RequestAction.REJECTED,
-                LocalDateTime.now(),
                 notes));
 
     }
@@ -139,7 +145,6 @@ public class VehicleRequest {
                 this,
                 canceledBy,
                 RequestAction.CANCELED,
-                LocalDateTime.now(),
                 notes));
 
     }

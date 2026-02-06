@@ -15,7 +15,7 @@ public record UserUpdateRequestDto(
         return new UserUpdateCommand(
                 userId,
                 name,
-                new Cpf(cpf),
+                cpf == null || cpf.isBlank() ? null : new Cpf(cpf),
                 roles);
 
     }

@@ -8,6 +8,7 @@ target/
 mvnw
 mvnw.cmd
 .mvn/
+*.sql
 
 
 ### STS ###
@@ -25,7 +26,6 @@ mvnw.cmd
 *.iml
 *.ipr
 .env
-migration.sql
 
 ### NetBeans ###
 /nbproject/private/
@@ -39,6 +39,3 @@ build/
 
 ### VS Code ###
 .vscode/
-local.txt
-TO-DO.md
-TODO.md

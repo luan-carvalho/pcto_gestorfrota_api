@@ -9,7 +9,6 @@ import br.edu.ifto.gestorfrotaapi.authentication.model.User;
 import br.edu.ifto.gestorfrotaapi.vehicle.exception.UpdateMileageException;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.enums.MileageEntrySource;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.enums.VehicleStatus;
-import br.edu.ifto.gestorfrotaapi.vehicle.model.enums.VehicleType;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.valueObjects.LicensePlate;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -39,9 +38,6 @@ public class Vehicle {
 
     @Embedded
     private LicensePlate licensePlate;
-
-    @Enumerated(EnumType.STRING)
-    private VehicleType type;
 
     @Column(nullable = false)
     private Integer currentMileage;

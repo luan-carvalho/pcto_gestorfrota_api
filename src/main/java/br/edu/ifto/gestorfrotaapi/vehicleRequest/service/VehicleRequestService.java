@@ -1,14 +1,14 @@
 package br.edu.ifto.gestorfrotaapi.vehicleRequest.service;
 
-import static br.edu.ifto.gestorfrotaapi.vehicleRequest.repository.specifications.VehicleRequestSpecification.createdBetween;
-import static br.edu.ifto.gestorfrotaapi.vehicleRequest.repository.specifications.VehicleRequestSpecification.hasPriority;
-import static br.edu.ifto.gestorfrotaapi.vehicleRequest.repository.specifications.VehicleRequestSpecification.hasProcessNumber;
-import static br.edu.ifto.gestorfrotaapi.vehicleRequest.repository.specifications.VehicleRequestSpecification.hasPurpose;
-import static br.edu.ifto.gestorfrotaapi.vehicleRequest.repository.specifications.VehicleRequestSpecification.hasRequestId;
-import static br.edu.ifto.gestorfrotaapi.vehicleRequest.repository.specifications.VehicleRequestSpecification.hasRequesterName;
-import static br.edu.ifto.gestorfrotaapi.vehicleRequest.repository.specifications.VehicleRequestSpecification.hasStatus;
-import static br.edu.ifto.gestorfrotaapi.vehicleRequest.repository.specifications.VehicleRequestSpecification.hasVehicleDescription;
-import static br.edu.ifto.gestorfrotaapi.vehicleRequest.repository.specifications.VehicleRequestSpecification.usageBetween;
+import static br.edu.ifto.gestorfrotaapi.vehicleRequest.repository.spec.VehicleRequestSpecification.createdBetween;
+import static br.edu.ifto.gestorfrotaapi.vehicleRequest.repository.spec.VehicleRequestSpecification.hasPriority;
+import static br.edu.ifto.gestorfrotaapi.vehicleRequest.repository.spec.VehicleRequestSpecification.hasProcessNumber;
+import static br.edu.ifto.gestorfrotaapi.vehicleRequest.repository.spec.VehicleRequestSpecification.hasPurpose;
+import static br.edu.ifto.gestorfrotaapi.vehicleRequest.repository.spec.VehicleRequestSpecification.hasRequestId;
+import static br.edu.ifto.gestorfrotaapi.vehicleRequest.repository.spec.VehicleRequestSpecification.hasRequesterName;
+import static br.edu.ifto.gestorfrotaapi.vehicleRequest.repository.spec.VehicleRequestSpecification.hasStatus;
+import static br.edu.ifto.gestorfrotaapi.vehicleRequest.repository.spec.VehicleRequestSpecification.hasVehicleDescription;
+import static br.edu.ifto.gestorfrotaapi.vehicleRequest.repository.spec.VehicleRequestSpecification.usageBetween;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,7 +34,7 @@ import br.edu.ifto.gestorfrotaapi.vehicleRequest.model.valueObjects.UsagePeriod;
 import br.edu.ifto.gestorfrotaapi.vehicleRequest.repository.VehicleRequestRepository;
 import br.edu.ifto.gestorfrotaapi.vehicleRequest.repository.filters.UserVehicleRequestFilter;
 import br.edu.ifto.gestorfrotaapi.vehicleRequest.repository.filters.VehicleRequestFilter;
-import br.edu.ifto.gestorfrotaapi.vehicleRequest.repository.specifications.VehicleRequestSpecification;
+import br.edu.ifto.gestorfrotaapi.vehicleRequest.repository.spec.VehicleRequestSpecification;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.command.OpenVehicleUsageCommand;
 import br.edu.ifto.gestorfrotaapi.vehicleUsage.service.VehicleUsageService;
 
@@ -58,10 +58,16 @@ public class VehicleRequestService {
     }
 
     @Transactional(readOnly = true)
-    public VehicleRequest findById(Long requestId) {
+    public VehicleRequest getRequest(Long requestId) {
 
         return requestRepo.findById(requestId)
                 .orElseThrow(() -> new VehicleRequestNotFoundException(requestId));
+
+    }
+
+    public VehicleRequestResponseDto findById(Long id) {
+
+        return mapper.toRequestResponseDto(getRequest(id));
 
     }
 
@@ -78,7 +84,7 @@ public class VehicleRequestService {
                         .priority(cmd.priority())
                         .purpose(cmd.purpose())
                         .processNumber(cmd.processNumber())
-                        .address(cmd.address())
+                        .destination(cmd.destination())
                         .build());
 
         return mapper.toRequestResponseDto(created);
@@ -88,9 +94,9 @@ public class VehicleRequestService {
     @PreAuthorize("hasRole('FLEET_MANAGER')")
     public void approve(ApproveRequestCommand cmd) {
 
-        User driver = userService.findById(cmd.driverId());
-        Vehicle vehicle = vehicleService.findById(cmd.vehicleId());
-        VehicleRequest request = findById(cmd.requestId());
+        User driver = userService.getUser(cmd.driverId());
+        Vehicle vehicle = vehicleService.getVehicle(cmd.vehicleId());
+        VehicleRequest request = getRequest(cmd.requestId());
         User approver = SecurityUtils.currentUser();
 
         if (!driver.hasRole(Role.DRIVER)) {
@@ -116,7 +122,7 @@ public class VehicleRequestService {
     public void reject(Long requestId, String notes) {
 
         User rejector = SecurityUtils.currentUser();
-        VehicleRequest request = findById(requestId);
+        VehicleRequest request = getRequest(requestId);
         request.reject(rejector, notes);
 
     }
@@ -125,7 +131,7 @@ public class VehicleRequestService {
     public void cancel(Long requestId, String notes) {
 
         User canceledBy = SecurityUtils.currentUser();
-        VehicleRequest request = findById(requestId);
+        VehicleRequest request = getRequest(requestId);
         request.cancel(canceledBy, notes);
 
     }

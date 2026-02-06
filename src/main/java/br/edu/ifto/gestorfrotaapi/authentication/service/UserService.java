@@ -1,7 +1,8 @@
 package br.edu.ifto.gestorfrotaapi.authentication.service;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,10 +11,13 @@ import br.edu.ifto.gestorfrotaapi.authentication.command.UserCreateCommand;
 import br.edu.ifto.gestorfrotaapi.authentication.command.UserUpdateCommand;
 import br.edu.ifto.gestorfrotaapi.authentication.dto.UserCreateResponseDto;
 import br.edu.ifto.gestorfrotaapi.authentication.dto.UserResponseDto;
+import br.edu.ifto.gestorfrotaapi.authentication.exception.CpfAlreadyRegistered;
 import br.edu.ifto.gestorfrotaapi.authentication.exception.UserNotFoundException;
 import br.edu.ifto.gestorfrotaapi.authentication.mapper.UserMapper;
 import br.edu.ifto.gestorfrotaapi.authentication.model.User;
 import br.edu.ifto.gestorfrotaapi.authentication.repository.UserRepository;
+import br.edu.ifto.gestorfrotaapi.authentication.repository.filter.UserFilter;
+import br.edu.ifto.gestorfrotaapi.authentication.repository.spec.UserSpecification;
 import br.edu.ifto.gestorfrotaapi.authentication.util.TokenGenerator;
 
 @Service
@@ -30,9 +34,15 @@ public class UserService {
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public List<UserResponseDto> findAll() {
+    public Page<UserResponseDto> findAll(UserFilter filter, Pageable pageable) {
 
-        return mapper.toResponseDto(userRepo.findAll());
+        Specification<User> spec = Specification
+                .where(UserSpecification.hasId(filter.id()))
+                .and(UserSpecification.hasName(filter.name()))
+                .and(UserSpecification.hasStatus(filter.status()))
+                .and(UserSpecification.hasRole(filter.role()));
+
+        return userRepo.findAll(spec, pageable).map(mapper::toResponseDto);
 
     }
 
@@ -40,11 +50,11 @@ public class UserService {
     @PreAuthorize("hasAnyRole('ADMIN')")
     public UserResponseDto findById(Long id) {
 
-        return mapper.toResponseDto(getById(id));
+        return mapper.toResponseDto(getUser(id));
 
     }
 
-    private User getById(Long id) {
+    public User getUser(Long id) {
 
         return userRepo.findById(id).orElseThrow(() -> new UserNotFoundException());
 
@@ -52,6 +62,12 @@ public class UserService {
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     public UserCreateResponseDto create(UserCreateCommand cmd) {
+
+        if (userRepo.existsByCpf(cmd.cpf())) {
+
+            throw new CpfAlreadyRegistered(cmd.cpf());
+
+        }
 
         return mapper
                 .toCreateResponseDto(
@@ -68,7 +84,9 @@ public class UserService {
     @PreAuthorize("hasAnyRole('ADMIN')")
     public UserResponseDto update(UserUpdateCommand cmd) {
 
-        User existingUser = getById(cmd.userId());
+        System.out.println("TESTE SERVICE");
+
+        User existingUser = getUser(cmd.userId());
         existingUser.updateInfo(cmd.name(), cmd.roles());
         return mapper.toResponseDto(existingUser);
 
@@ -77,7 +95,7 @@ public class UserService {
     @PreAuthorize("hasAnyRole('ADMIN')")
     public void activate(Long id) {
 
-        User user = getById(id);
+        User user = getUser(id);
         user.activate();
 
     }
@@ -85,7 +103,7 @@ public class UserService {
     @PreAuthorize("hasAnyRole('ADMIN')")
     public void deactivate(Long id) {
 
-        User user = getById(id);
+        User user = getUser(id);
         user.deactivate();
 
     }

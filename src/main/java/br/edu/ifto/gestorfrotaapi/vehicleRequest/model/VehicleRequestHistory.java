@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 
 @Entity
 public class VehicleRequestHistory {
@@ -38,12 +39,15 @@ public class VehicleRequestHistory {
     public VehicleRequestHistory() {
     }
 
-    public VehicleRequestHistory(VehicleRequest request, User performedBy, RequestAction action,
-            LocalDateTime performedAt, String notes) {
+    @PrePersist
+    void onCreate() {
+        this.performedAt = LocalDateTime.now();
+    }
+
+    public VehicleRequestHistory(VehicleRequest request, User performedBy, RequestAction action, String notes) {
         this.request = request;
         this.performedBy = performedBy;
         this.action = action;
-        this.performedAt = performedAt;
         this.notes = notes;
     }
 

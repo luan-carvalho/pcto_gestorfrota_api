@@ -2,6 +2,7 @@ package br.edu.ifto.gestorfrotaapi.vehicleUsage.controller;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -29,7 +30,8 @@ public class VehicleUsageController {
     }
 
     @GetMapping
-    public Page<VehicleUsageResponseDto> getUsages(VehicleUsageFilter filter, Pageable pageable) {
+    public Page<VehicleUsageResponseDto> getUsages(VehicleUsageFilter filter,
+            @PageableDefault(size = 10, sort = "id") Pageable pageable) {
 
         return service.searchForVehicleUsage(filter, pageable);
 
@@ -43,7 +45,8 @@ public class VehicleUsageController {
     }
 
     @GetMapping("/my-usages")
-    public Page<VehicleUsageResponseDto> getDriverUsages(UserVehicleUsageFilter filter, Pageable pageable) {
+    public Page<VehicleUsageResponseDto> getDriverUsages(UserVehicleUsageFilter filter,
+            @PageableDefault(size = 10, sort = "id") Pageable pageable) {
 
         return service.getDriverUsages(filter, pageable);
 

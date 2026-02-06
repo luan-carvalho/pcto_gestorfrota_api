@@ -1,4 +1,4 @@
-package br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.specifications;
+package br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.spec;
 
 import java.time.LocalDateTime;
 

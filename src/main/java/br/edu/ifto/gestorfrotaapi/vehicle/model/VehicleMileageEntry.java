@@ -37,6 +37,9 @@ public class VehicleMileageEntry {
     @Enumerated(EnumType.STRING)
     private MileageEntrySource source;
 
+    protected VehicleMileageEntry() {
+    }
+
     public VehicleMileageEntry(Vehicle vehicle, Integer mileage, User recordedBy, LocalDateTime recordedAt, String obs,
             MileageEntrySource source) {
         this.vehicle = vehicle;

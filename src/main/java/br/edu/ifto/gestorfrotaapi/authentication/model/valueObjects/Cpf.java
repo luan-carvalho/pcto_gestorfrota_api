@@ -8,7 +8,7 @@ import jakarta.persistence.Embeddable;
 @Embeddable
 public class Cpf {
 
-    @Column(name = "cpf", length = 11, nullable = false)
+    @Column(name = "cpf", length = 11, nullable = false, unique = true)
     private String value;
 
     protected Cpf() {
@@ -47,6 +47,11 @@ public class Cpf {
                 return false;
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return getFormatted();
     }
 
     private static boolean calculateCheckDigits(String cpf) {

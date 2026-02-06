@@ -4,6 +4,7 @@ import java.net.URI;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -15,7 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.edu.ifto.gestorfrotaapi.vehicleRequest.dto.VehicleRequestApprovalDto;
+import br.edu.ifto.gestorfrotaapi.vehicleRequest.dto.VehicleRequestCancelDto;
 import br.edu.ifto.gestorfrotaapi.vehicleRequest.dto.VehicleRequestCreateRequestDto;
+import br.edu.ifto.gestorfrotaapi.vehicleRequest.dto.VehicleRequestRejectDto;
 import br.edu.ifto.gestorfrotaapi.vehicleRequest.dto.VehicleRequestResponseDto;
 import br.edu.ifto.gestorfrotaapi.vehicleRequest.repository.filters.UserVehicleRequestFilter;
 import br.edu.ifto.gestorfrotaapi.vehicleRequest.repository.filters.VehicleRequestFilter;
@@ -33,14 +36,23 @@ public class VehicleRequestController {
     }
 
     @GetMapping
-    public Page<VehicleRequestResponseDto> getRequests(VehicleRequestFilter filter, Pageable pageable) {
+    public Page<VehicleRequestResponseDto> getRequests(VehicleRequestFilter filter,
+            @PageableDefault(size = 10, sort = "id") Pageable pageable) {
 
         return service.searchForVehicleRequest(filter, pageable);
 
     }
 
+    @GetMapping("/{id}")
+    public VehicleRequestResponseDto getRequestDetails(@PathVariable Long id) {
+
+        return service.findById(id);
+
+    }
+
     @GetMapping("/my-requests")
-    public Page<VehicleRequestResponseDto> getUserRequests(UserVehicleRequestFilter filter, Pageable pageable) {
+    public Page<VehicleRequestResponseDto> getUserRequests(UserVehicleRequestFilter filter,
+            @PageableDefault(size = 10, sort = "id") Pageable pageable) {
 
         return service.getUserRequests(filter, pageable);
 

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -31,6 +32,20 @@ public class ApplicationExceptionHandler {
     public ResponseEntity<ApiErrorResponseDto> handleVehicleNotFoundException(VehicleNotFoundException e) {
 
         HttpStatus status = HttpStatus.NOT_FOUND;
+        ApiErrorResponseDto error = new ApiErrorResponseDto(
+                status.value(),
+                status.getReasonPhrase(),
+                e.getMessage(),
+                LocalDateTime.now());
+
+        return new ResponseEntity<>(error, status);
+
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiErrorResponseDto> handleVehicleNotFoundException(MethodArgumentNotValidException e) {
+
+        HttpStatus status = HttpStatus.BAD_REQUEST;
         ApiErrorResponseDto error = new ApiErrorResponseDto(
                 status.value(),
                 status.getReasonPhrase(),

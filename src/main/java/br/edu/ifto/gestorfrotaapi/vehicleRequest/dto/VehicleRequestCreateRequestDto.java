@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import br.edu.ifto.gestorfrotaapi.vehicleRequest.command.OpenVehicleRequestCommand;
 import br.edu.ifto.gestorfrotaapi.vehicleRequest.model.enums.RequestPriority;
 import br.edu.ifto.gestorfrotaapi.vehicleRequest.model.enums.VehicleRequestPurpose;
+import br.edu.ifto.gestorfrotaapi.vehicleRequest.model.valueObjects.Location;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -16,7 +17,10 @@ public record VehicleRequestCreateRequestDto(
                 @NotNull LocalDateTime endDateTime,
                 @NotNull VehicleRequestPurpose purpose,
                 @NotBlank String processNumber,
-                @NotBlank String address) {
+                @NotBlank String city,
+                @NotBlank String state,
+                Double latitude,
+                Double longitude) {
 
         public OpenVehicleRequestCommand toOpenRequestCommand() {
 
@@ -27,7 +31,7 @@ public record VehicleRequestCreateRequestDto(
                                 endDateTime,
                                 purpose,
                                 processNumber,
-                                address);
+                                new Location(city, state, latitude, longitude));
 
         }
 
