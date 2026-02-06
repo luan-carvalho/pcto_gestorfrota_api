@@ -43,9 +43,9 @@ public class VehicleUsageSpecification {
         };
     }
 
-    public static Specification<VehicleUsage> hasVehicleRequestId(Long requestId) {
+    public static Specification<VehicleUsage> hasRequestId(Long requestId) {
         return (root, query, cb) -> requestId == null ? null
-                : cb.equal(root.get("vehicleRequest").get("id"), requestId);
+                : cb.equal(root.get("request").get("id"), requestId);
     }
 
     public static Specification<VehicleUsage> hasVehicleDescription(String description) {
@@ -59,9 +59,9 @@ public class VehicleUsageSpecification {
             }
 
             var pattern = "%" + description.toLowerCase() + "%";
-            var licensePlate = cb.lower(root.get("vehicleRequest").get("vehicle").get("licensePlate"));
-            var make = cb.lower(root.get("vehicleRequest").get("vehicle").get("make"));
-            var model = cb.lower(root.get("vehicleRequest").get("vehicle").get("model"));
+            var licensePlate = cb.lower(root.get("request").get("vehicle").get("licensePlate"));
+            var make = cb.lower(root.get("request").get("vehicle").get("make"));
+            var model = cb.lower(root.get("request").get("vehicle").get("model"));
 
             var concat = cb.concat(
                     cb.concat(make, " "),
@@ -113,17 +113,17 @@ public class VehicleUsageSpecification {
             if (start == null && end == null)
                 return null;
             if (start != null && end != null)
-                return cb.between(root.get("vehicleRequest").get("startDateTime"), start, end);
+                return cb.between(root.get("request").get("startDateTime"), start, end);
             if (start != null)
-                return cb.greaterThanOrEqualTo(root.get("vehicleRequest").get("startDateTime"), start);
-            return cb.lessThanOrEqualTo(root.get("vehicleRequest").get("endDateTime"), end);
+                return cb.greaterThanOrEqualTo(root.get("request").get("startDateTime"), start);
+            return cb.lessThanOrEqualTo(root.get("request").get("endDateTime"), end);
         };
     }
 
     public static Specification<VehicleUsage> hasStatus(VehicleUsageStatus status) {
         return (root, query, cb) -> status == null ? null
                 : cb.equal(
-                        root.get("vehicleRequest").get("status"),
+                        root.get("status"),
                         status);
     }
 

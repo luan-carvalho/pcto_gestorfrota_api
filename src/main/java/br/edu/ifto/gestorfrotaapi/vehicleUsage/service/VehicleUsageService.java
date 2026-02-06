@@ -4,10 +4,10 @@ import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.spec.VehicleUsa
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.spec.VehicleUsageSpecification.checkOutBetween;
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.spec.VehicleUsageSpecification.hasDriverId;
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.spec.VehicleUsageSpecification.hasDriverName;
+import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.spec.VehicleUsageSpecification.hasRequestId;
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.spec.VehicleUsageSpecification.hasRequesterName;
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.spec.VehicleUsageSpecification.hasStatus;
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.spec.VehicleUsageSpecification.hasVehicleDescription;
-import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.spec.VehicleUsageSpecification.hasVehicleRequestId;
 import static br.edu.ifto.gestorfrotaapi.vehicleUsage.repository.spec.VehicleUsageSpecification.usageBetween;
 
 import java.util.List;
@@ -164,7 +164,7 @@ public class VehicleUsageService {
 
         Specification<VehicleUsage> spec = Specification
                 .where(hasDriverName(filter.driverName()))
-                .and(hasVehicleRequestId(filter.requestId()))
+                .and(hasRequestId(filter.requestId()))
                 .and(hasVehicleDescription(filter.vehicleDescription()))
                 .and(checkInBetween(filter.checkInFrom(), filter.checkInTo()))
                 .and(checkOutBetween(filter.checkOutFrom(), filter.checkOutTo()))
@@ -183,7 +183,7 @@ public class VehicleUsageService {
         Specification<VehicleUsage> spec = Specification
                 .where(hasDriverId(loggedDriver.getId()))
                 .and(hasRequesterName(filter.requesterName()))
-                .and(hasVehicleRequestId(filter.requestId()))
+                .and(hasRequestId(filter.requestId()))
                 .and(hasVehicleDescription(filter.vehicleDescription()))
                 .and(hasStatus(filter.status()))
                 .and(usageBetween(filter.usageFrom(), filter.usageTo()));

@@ -52,7 +52,7 @@ public interface VehicleUsageRepository
         @Query("""
                         SELECT v
                         FROM Vehicle v
-                        WHERE v.status = :status
+                        WHERE v.status = :vehicleStatus
                         AND NOT EXISTS (
                             SELECT 1
                             FROM VehicleUsage vu

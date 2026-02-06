@@ -38,4 +38,10 @@ public class UsagePeriod {
 
     }
 
+    public static UsagePeriod of(LocalDateTime startDateTime, LocalDateTime endDateTime) {
+
+        return new UsagePeriod(startDateTime, endDateTime);
+
+    }
+
 }
