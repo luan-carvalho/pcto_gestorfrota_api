@@ -17,10 +17,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.edu.ifto.gestorfrotaapi.authentication.model.User;
-import br.edu.ifto.gestorfrotaapi.authentication.model.enums.Role;
-import br.edu.ifto.gestorfrotaapi.authentication.service.UserService;
-import br.edu.ifto.gestorfrotaapi.authentication.util.SecurityUtils;
+import br.edu.ifto.gestorfrotaapi.infra.security.util.SecurityUtils;
+import br.edu.ifto.gestorfrotaapi.user.application.services.UserService;
+import br.edu.ifto.gestorfrotaapi.user.domain.enums.Role;
+import br.edu.ifto.gestorfrotaapi.user.domain.model.User;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.Vehicle;
 import br.edu.ifto.gestorfrotaapi.vehicle.service.VehicleService;
 import br.edu.ifto.gestorfrotaapi.vehicleRequest.command.ApproveRequestCommand;

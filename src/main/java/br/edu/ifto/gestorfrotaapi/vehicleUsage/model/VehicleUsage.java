@@ -2,7 +2,7 @@ package br.edu.ifto.gestorfrotaapi.vehicleUsage.model;
 
 import java.time.LocalDateTime;
 
-import br.edu.ifto.gestorfrotaapi.authentication.model.User;
+import br.edu.ifto.gestorfrotaapi.user.domain.model.User;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.Vehicle;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.enums.MileageEntrySource;
 import br.edu.ifto.gestorfrotaapi.vehicleRequest.model.VehicleRequest;
