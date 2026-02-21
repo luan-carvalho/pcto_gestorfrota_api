@@ -68,8 +68,3 @@ Update the `src/main/resources/application.properties` with your PostgreSQL cred
 mvn spring-boot:run
 
 ```
-
-* LinkedIn: [luan-carvalho-de-souza](https://www.google.com/search?q=https://linkedin.com/in/luan-carvalho-de-souza-5b5ab01a0) 
-
-
-* GitHub: [@luan-carvalho](https://www.google.com/search?q=https://github.com/luan-carvalho) 
