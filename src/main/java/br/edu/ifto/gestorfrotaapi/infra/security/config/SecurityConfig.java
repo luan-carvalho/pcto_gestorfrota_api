@@ -32,6 +32,13 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/actuator/health").permitAll()
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/v2/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/webjars/**")
+                        .permitAll()
                         .requestMatchers("/auth/login").permitAll()
                         .requestMatchers("/auth/first-access/**").permitAll()
                         .anyRequest().authenticated())
