@@ -9,9 +9,9 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import br.edu.ifto.gestorfrotaapi.user.domain.enums.Role;
-import br.edu.ifto.gestorfrotaapi.user.domain.enums.UserStatus;
-import br.edu.ifto.gestorfrotaapi.user.domain.model.User;
+import br.edu.ifto.gestorfrotaapi.user.model.User;
+import br.edu.ifto.gestorfrotaapi.user.model.enums.Role;
+import br.edu.ifto.gestorfrotaapi.user.model.enums.UserStatus;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.Vehicle;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.enums.VehicleStatus;
 import br.edu.ifto.gestorfrotaapi.vehicleRequest.model.valueObjects.UsagePeriod;

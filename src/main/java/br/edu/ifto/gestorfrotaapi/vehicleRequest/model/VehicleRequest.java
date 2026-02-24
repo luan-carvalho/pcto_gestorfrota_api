@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import br.edu.ifto.gestorfrotaapi.user.domain.model.User;
+import br.edu.ifto.gestorfrotaapi.user.model.User;
 import br.edu.ifto.gestorfrotaapi.vehicleRequest.exception.VehicleRequestApprovalException;
 import br.edu.ifto.gestorfrotaapi.vehicleRequest.model.enums.RequestAction;
 import br.edu.ifto.gestorfrotaapi.vehicleRequest.model.enums.RequestPriority;

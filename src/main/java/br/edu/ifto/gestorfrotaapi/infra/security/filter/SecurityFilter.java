@@ -9,10 +9,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import br.edu.ifto.gestorfrotaapi.infra.security.service.TokenService;
-import br.edu.ifto.gestorfrotaapi.user.domain.enums.UserStatus;
-import br.edu.ifto.gestorfrotaapi.user.domain.exception.UserNotFoundException;
-import br.edu.ifto.gestorfrotaapi.user.domain.valueObjects.Cpf;
-import br.edu.ifto.gestorfrotaapi.user.persistence.repository.UserRepository;
+import br.edu.ifto.gestorfrotaapi.user.exception.UserNotFoundException;
+import br.edu.ifto.gestorfrotaapi.user.model.enums.UserStatus;
+import br.edu.ifto.gestorfrotaapi.user.model.valueObjects.Cpf;
+import br.edu.ifto.gestorfrotaapi.user.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

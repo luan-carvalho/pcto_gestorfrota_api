@@ -18,9 +18,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.edu.ifto.gestorfrotaapi.infra.security.util.SecurityUtils;
-import br.edu.ifto.gestorfrotaapi.user.application.services.UserService;
-import br.edu.ifto.gestorfrotaapi.user.domain.enums.Role;
-import br.edu.ifto.gestorfrotaapi.user.domain.model.User;
+import br.edu.ifto.gestorfrotaapi.user.model.User;
+import br.edu.ifto.gestorfrotaapi.user.model.enums.Role;
+import br.edu.ifto.gestorfrotaapi.user.services.UserService;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.Vehicle;
 import br.edu.ifto.gestorfrotaapi.vehicle.service.VehicleService;
 import br.edu.ifto.gestorfrotaapi.vehicleRequest.command.ApproveRequestCommand;
@@ -140,7 +140,8 @@ public class VehicleRequestService {
     public Page<VehicleRequestResponseDto> searchForVehicleRequest(VehicleRequestFilter filter, Pageable pageable) {
 
         Specification<VehicleRequest> spec = Specification
-                .where(hasRequesterName(filter.requesterName()))
+                .<VehicleRequest>unrestricted()
+                .and(hasRequesterName(filter.requesterName()))
                 .and(hasRequestId(filter.requestId()))
                 .and(hasVehicleDescription(filter.vehicleDescription()))
                 .and(hasStatus(filter.status()))
@@ -161,7 +162,8 @@ public class VehicleRequestService {
         User loggedUser = SecurityUtils.currentUser();
 
         Specification<VehicleRequest> spec = Specification
-                .where(hasRequestId(filter.requestId()))
+                .<VehicleRequest>unrestricted()
+                .and(hasRequestId(filter.requestId()))
                 .and(VehicleRequestSpecification.hasRequesterId(loggedUser.getId()))
                 .and(hasVehicleDescription(filter.vehicleDescription()))
                 .and(hasStatus(filter.status()))

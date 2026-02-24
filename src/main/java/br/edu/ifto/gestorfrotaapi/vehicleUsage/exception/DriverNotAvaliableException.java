@@ -1,6 +1,6 @@
 package br.edu.ifto.gestorfrotaapi.vehicleUsage.exception;
 
-import br.edu.ifto.gestorfrotaapi.user.domain.model.User;
+import br.edu.ifto.gestorfrotaapi.user.model.User;
 
 public class DriverNotAvaliableException extends RuntimeException {
 

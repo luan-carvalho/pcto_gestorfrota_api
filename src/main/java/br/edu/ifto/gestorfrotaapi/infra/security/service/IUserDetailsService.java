@@ -5,11 +5,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
-import br.edu.ifto.gestorfrotaapi.user.domain.enums.UserStatus;
-import br.edu.ifto.gestorfrotaapi.user.domain.exception.UserNotFoundException;
-import br.edu.ifto.gestorfrotaapi.user.domain.model.User;
-import br.edu.ifto.gestorfrotaapi.user.domain.valueObjects.Cpf;
-import br.edu.ifto.gestorfrotaapi.user.persistence.repository.UserRepository;
+import br.edu.ifto.gestorfrotaapi.user.exception.UserNotFoundException;
+import br.edu.ifto.gestorfrotaapi.user.model.User;
+import br.edu.ifto.gestorfrotaapi.user.model.enums.UserStatus;
+import br.edu.ifto.gestorfrotaapi.user.model.valueObjects.Cpf;
+import br.edu.ifto.gestorfrotaapi.user.repository.UserRepository;
 
 @Service
 public class IUserDetailsService implements UserDetailsService {

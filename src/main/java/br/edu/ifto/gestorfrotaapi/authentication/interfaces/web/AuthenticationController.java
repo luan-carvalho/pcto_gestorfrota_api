@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.edu.ifto.gestorfrotaapi.authentication.application.dto.ActivateUserDto;
-import br.edu.ifto.gestorfrotaapi.authentication.application.dto.LoginDto;
-import br.edu.ifto.gestorfrotaapi.authentication.application.dto.LoginResponseDto;
-import br.edu.ifto.gestorfrotaapi.authentication.application.dto.UpdatePasswordDto;
-import br.edu.ifto.gestorfrotaapi.authentication.application.dto.VerifyFirstAccessDto;
-import br.edu.ifto.gestorfrotaapi.authentication.application.services.AuthenticationService;
+import br.edu.ifto.gestorfrotaapi.authentication.dto.ActivateUserDto;
+import br.edu.ifto.gestorfrotaapi.authentication.dto.LoginDto;
+import br.edu.ifto.gestorfrotaapi.authentication.dto.LoginResponseDto;
+import br.edu.ifto.gestorfrotaapi.authentication.dto.UpdatePasswordDto;
+import br.edu.ifto.gestorfrotaapi.authentication.dto.VerifyFirstAccessDto;
+import br.edu.ifto.gestorfrotaapi.authentication.services.AuthenticationService;
 import jakarta.validation.Valid;
 
 @RestController

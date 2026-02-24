@@ -2,7 +2,7 @@ package br.edu.ifto.gestorfrotaapi.vehicle.model;
 
 import java.time.LocalDateTime;
 
-import br.edu.ifto.gestorfrotaapi.user.domain.model.User;
+import br.edu.ifto.gestorfrotaapi.user.model.User;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.enums.MileageEntrySource;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

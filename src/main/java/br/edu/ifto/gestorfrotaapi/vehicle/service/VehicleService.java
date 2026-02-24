@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.edu.ifto.gestorfrotaapi.infra.security.util.SecurityUtils;
-import br.edu.ifto.gestorfrotaapi.user.domain.model.User;
+import br.edu.ifto.gestorfrotaapi.user.model.User;
 import br.edu.ifto.gestorfrotaapi.vehicle.command.CreateVehicleCommand;
 import br.edu.ifto.gestorfrotaapi.vehicle.command.UpdateVehicleCommand;
 import br.edu.ifto.gestorfrotaapi.vehicle.dto.VehicleResponseDto;
@@ -36,7 +36,8 @@ public class VehicleService {
     public Page<VehicleResponseDto> findAll(VehicleFilter filter, Pageable pageable) {
 
         Specification<Vehicle> spec = Specification
-                .where(VehicleSpecification.hasId(filter.id()))
+                .<Vehicle>unrestricted()
+                .and(VehicleSpecification.hasId(filter.id()))
                 .and(VehicleSpecification.hasDescription(filter.description()))
                 .and(VehicleSpecification.hasStatus(filter.status()));
 

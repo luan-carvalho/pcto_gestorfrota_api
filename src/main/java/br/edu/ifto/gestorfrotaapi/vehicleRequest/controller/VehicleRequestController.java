@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import br.edu.ifto.gestorfrotaapi.user.application.dto.UserResponseDto;
+import br.edu.ifto.gestorfrotaapi.user.dto.UserResponseDto;
 import br.edu.ifto.gestorfrotaapi.vehicle.dto.VehicleResponseDto;
 import br.edu.ifto.gestorfrotaapi.vehicleRequest.dto.VehicleRequestApprovalDto;
 import br.edu.ifto.gestorfrotaapi.vehicleRequest.dto.VehicleRequestCancelDto;

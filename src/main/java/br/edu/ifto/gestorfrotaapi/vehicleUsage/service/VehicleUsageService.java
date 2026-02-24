@@ -19,10 +19,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.edu.ifto.gestorfrotaapi.authentication.application.mapper.UserMapper;
+import br.edu.ifto.gestorfrotaapi.authentication.mapper.UserMapper;
 import br.edu.ifto.gestorfrotaapi.infra.security.util.SecurityUtils;
-import br.edu.ifto.gestorfrotaapi.user.application.dto.UserResponseDto;
-import br.edu.ifto.gestorfrotaapi.user.domain.model.User;
+import br.edu.ifto.gestorfrotaapi.user.dto.UserResponseDto;
+import br.edu.ifto.gestorfrotaapi.user.model.User;
 import br.edu.ifto.gestorfrotaapi.vehicle.dto.VehicleResponseDto;
 import br.edu.ifto.gestorfrotaapi.vehicle.mapper.VehicleMapper;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.Vehicle;
@@ -163,7 +163,8 @@ public class VehicleUsageService {
     public Page<VehicleUsageResponseDto> searchForVehicleUsage(VehicleUsageFilter filter, Pageable pageable) {
 
         Specification<VehicleUsage> spec = Specification
-                .where(hasDriverName(filter.driverName()))
+                .<VehicleUsage>unrestricted()
+                .and(hasDriverName(filter.driverName()))
                 .and(hasRequestId(filter.requestId()))
                 .and(hasVehicleDescription(filter.vehicleDescription()))
                 .and(checkInBetween(filter.checkInFrom(), filter.checkInTo()))
@@ -181,7 +182,8 @@ public class VehicleUsageService {
         User loggedDriver = SecurityUtils.currentUser();
 
         Specification<VehicleUsage> spec = Specification
-                .where(hasDriverId(loggedDriver.getId()))
+                .<VehicleUsage>unrestricted()
+                .and(hasDriverId(loggedDriver.getId()))
                 .and(hasRequesterName(filter.requesterName()))
                 .and(hasRequestId(filter.requestId()))
                 .and(hasVehicleDescription(filter.vehicleDescription()))

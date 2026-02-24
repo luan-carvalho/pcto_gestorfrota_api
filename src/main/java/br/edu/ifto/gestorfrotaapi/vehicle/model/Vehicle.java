@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import br.edu.ifto.gestorfrotaapi.user.domain.model.User;
+import br.edu.ifto.gestorfrotaapi.user.model.User;
 import br.edu.ifto.gestorfrotaapi.vehicle.exception.UpdateMileageException;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.enums.MileageEntrySource;
 import br.edu.ifto.gestorfrotaapi.vehicle.model.enums.VehicleStatus;

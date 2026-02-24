@@ -3,7 +3,7 @@ package br.edu.ifto.gestorfrotaapi.infra.security.util;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import br.edu.ifto.gestorfrotaapi.user.domain.model.User;
+import br.edu.ifto.gestorfrotaapi.user.model.User;
 
 public final class SecurityUtils {
 
