@@ -2,7 +2,7 @@
 
 ## 📖 About the Project
 
-**PCTO_GESTORFROTA_API** is a robust backend solution developed to modernize the fleet management of the **State Civil Police of Tocantins (PCTO)**. The system streamlines the administration of operational vehicles, replacing manual processes with an automated flow for requests, approvals, and maintenance.
+**PCTO_GESTORFROTA_API** is a backend solution developed to modernize the fleet management of the **State Civil Police of Tocantins (PCTO)**. The system streamlines the administration of operational vehicles, replacing manual processes with an automated flow for requests, approvals, and maintenance.
 
 ### 🎓 Academic & Institutional Context
 
