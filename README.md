@@ -1,4 +1,4 @@
-# PCTO_GESTORFROTA_API 🚓
+# PCTO_GESTORFROTA_API 
 
 ## 📖 About the Project
 
