@@ -231,6 +231,14 @@ jobs:
             }
           ' "$DOCKERFILE" > "$temp_dockerfile"
           
+      - name: 🔍 Debug - Conferindo as variáveis resolvidas
+        run: |
+          echo "--- Conteúdo do arquivo .build.resolved.env ---"
+          cat .build.resolved.env
+          echo "--- Fim do arquivo ---"
+          
+          echo "--- Linhas ENV injetadas no Dockerfile ---"
+          grep "ENV " ${{ steps.dockerfile.outputs.TEMP_DOCKERFILE }}
 
       - name: ⛴️ Login no Docker Hub
         uses: docker/login-action@v3
