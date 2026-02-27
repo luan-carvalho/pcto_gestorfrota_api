@@ -71,9 +71,15 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(
                 List.of(
-                        "http://200.*:30850",
-                        "http://localhost:*",
-                        "http://127.0.0.1:*"));
+                        "http://200.137.87.174:30850",
+                        "http://200.17.58.102:30850",
+                        "http://200.129.75.240:30850",
+                        "http://200.159.252.130:30850",
+                        "http://200.137.0.24:30850",
+                        "http://200.128.2.42:30850",
+                        "http://200.19.158.215:30850",
+                        "http://200.159.254.103:30850",
+                        "http://200.137.0.21:30850"));
         configuration.setAllowedMethods(List.of("*"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
