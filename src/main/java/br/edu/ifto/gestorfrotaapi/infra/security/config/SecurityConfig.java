@@ -79,7 +79,9 @@ public class SecurityConfig {
                         "http://200.128.2.42:30850",
                         "http://200.19.158.215:30850",
                         "http://200.159.254.103:30850",
-                        "http://200.137.0.21:30850"));
+                        "http://200.137.0.21:30850",
+                        "http://localhost:[*]",
+                        "http://127.0.0.1:[*]"));
 
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"));
 
